@@ -32,14 +32,10 @@
         var swBound = new google.maps.LatLng(41.7087976, -71.44134);
         var neBound = new google.maps.LatLng(41.73783, -71.41615);
         
-        //cropped image
-        //var swBound = new google.maps.LatLng(41.7088, 71.434722);
-        //var neBound = new google.maps.LatLng(41.734722, 71.416667);
-        
         var bounds = new google.maps.LatLngBounds(swBound, neBound);
 
         //kpvd airport diagram
-        var srcImage = 'airports/pvd.png';
+        var srcImage = 'airports/pvd2.png';
         overlay = new PVDOverlay(bounds, srcImage, map);
       }
 
@@ -119,8 +115,8 @@
   </head>
   <body onload="initialize()">
   <div id="page" style="height: 100%; width: 100%">
-      <p>Welcome to the cockpit!</p>
-        <div id="map_canvas" style="width:100%; height:92%;"></div>
+      
+        <div id="map_canvas" style="width:100%; height:100%;"></div>
   </div>
   </body>
 </html>
