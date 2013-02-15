@@ -32,11 +32,13 @@
     <!-- eventually want to set cache expiration
         https://developers.google.com/appengine/docs/java/config/appconfig?hl=en-US#Setting_the_Cache_Expiration
     -->
-    <include path="/war/airports/*.png" /> <!-- for airport diagrams -->
+    <include path="/airports/*.png" /> <!-- for airport diagrams -->
+    <include path="/favicon.ico" />
+    <include path="/index.html" />
   </static-files>
   
   <resource-files>
-    <include path=/war/airports/*.xml" /> <!-- for airport xml data -->
+    <include path="/airports/*.xml" /> <!-- for airport xml data -->
   </resource-files>
 
 </appengine-web-app>
