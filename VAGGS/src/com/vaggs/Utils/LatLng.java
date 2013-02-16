@@ -20,4 +20,8 @@ public class LatLng {
 	public String toString() {
 		return "(" + lat + ", " + lng + ")";
 	}
+	
+	public boolean equals(LatLng o) {
+		return this.lat == o.lat && this.lng == o.lng;
+	}
 }
