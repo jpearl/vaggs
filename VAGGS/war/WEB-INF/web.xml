@@ -3,10 +3,26 @@
 		<servlet-name>VAGGS</servlet-name>
 		<servlet-class>com.vaggs.VAGGSServlet</servlet-class>
 	</servlet>
+	<servlet>
+	   <servlet-name>Cockpit</servlet-name>
+	   <servlet-class>com.vaggs.Servlets.Cockpit</servlet-class>
+	</servlet>
+	<servlet>
+       <servlet-name>ATC</servlet-name>
+       <servlet-class>com.vaggs.Servlets.ATC</servlet-class>
+    </servlet>
 	<servlet-mapping>
 		<servlet-name>VAGGS</servlet-name>
 		<url-pattern>/vaggs</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>Cockpit</servlet-name>
+        <url-pattern>/cockpit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ATC</servlet-name>
+        <url-pattern>/atc</url-pattern>
+    </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
