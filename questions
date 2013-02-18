@@ -1,0 +1,10 @@
+Business Logic Questions:
+========================
+Do we need an audit trail?
+	if yes, then need to keep exact flight info for a route and not just transponder code and need to store route requests
+
+
+App Engine Questions
+====================
+include multiple jsp files in a single servlet page?
+in Airport, should center be the computed average of sw and ne corners?
