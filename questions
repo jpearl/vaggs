@@ -2,9 +2,14 @@ Business Logic Questions:
 ========================
 Do we need an audit trail?
 	if yes, then need to keep exact flight info for a route and not just transponder code and need to store route requests
+Level of authentication for ATC and Cockpit?
+	problem is if "pilot" impersonator requests new route
+	or if an "atc" impersonator gives out false routes
 
 
-App Engine Questions
-====================
+App Engine Questions/Technical Questions
+========================================
 include multiple jsp files in a single servlet page?
 in Airport, should center be the computed average of sw and ne corners?
+properties file for API key?
+Taxiway intersection Class encapsulates Waypoint? (depends how ATC creates a route)
