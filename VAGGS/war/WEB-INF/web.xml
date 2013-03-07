@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
 		<servlet-name>VAGGS</servlet-name>
-		<servlet-class>com.vaggs.VAGGSServlet</servlet-class>
+		<servlet-class>com.vaggs.Servlets.VAGGSServ</servlet-class>
 	</servlet>
 	<servlet>
 	   <servlet-name>Cockpit</servlet-name>
-	   <servlet-class>com.vaggs.Servlets.Cockpit</servlet-class>
+	   <servlet-class>com.vaggs.Servlets.CockpitServ</servlet-class>
 	</servlet>
 	<servlet>
-       <servlet-name>ATC</servlet-name>
-       <servlet-class>com.vaggs.Servlets.ATC</servlet-class>
+       <servlet-name>Tower</servlet-name>
+       <servlet-class>com.vaggs.Servlets.TowerServ</servlet-class>
+    </servlet>
+	<servlet>
+       <servlet-name>Route</servlet-name>
+       <servlet-class>com.vaggs.Servlets.RouteServ</servlet-class>
     </servlet>
 	<servlet-mapping>
 		<servlet-name>VAGGS</servlet-name>
@@ -19,9 +23,13 @@
         <servlet-name>Cockpit</servlet-name>
         <url-pattern>/cockpit</url-pattern>
     </servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>Route</servlet-name>
+        <url-pattern>/route</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ATC</servlet-name>
-        <url-pattern>/atc</url-pattern>
+        <servlet-name>Tower</servlet-name>
+        <url-pattern>/tower</url-pattern>
     </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
