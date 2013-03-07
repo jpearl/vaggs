@@ -28,6 +28,35 @@
         });
       }
       
+
+	  function sendControl(sendDiv,map){
+
+		sendDiv.style.padding = '5px';
+
+	  	// Set CSS for the control border.
+ 		var controlUI = document.createElement('div');
+ 	 	controlUI.style.backgroundColor = 'white';
+  		controlUI.style.borderStyle = 'solid';
+  		controlUI.style.borderWidth = '1px';
+  		controlUI.style.cursor = 'pointer';
+  		controlUI.style.textAlign = 'center';
+  		sendDiv.appendChild(controlUI);
+
+  		// Set CSS for the control interior.
+  		var controlText = document.createElement('div');
+  		controlText.style.fontFamily = 'Arial,sans-serif';
+  		controlText.style.fontSize = '12px';
+  		controlText.style.paddingLeft = '4px';
+  		controlText.style.paddingRight = '4px';
+  		controlText.innerHTML = '<strong>Send</strong>';
+  		controlUI.appendChild(controlText);
+
+  		google.maps.event.addDomListener(controlUI, 'click', function() {
+    		map.setCenter(new google.maps.LatLng(41.7258, -71.4368))
+  		});
+	}
+
+
       function initialize() {
         $.ajax({cache:false});
         TransponderCall();
@@ -40,6 +69,11 @@
         };
 
         var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+
+		var sendDiv = document.createElement('div');
+		var send = new sendControl(sendDiv, map);
+        sendDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(sendDiv);
         
         //sanity check for coordinates
         new google.maps.Marker({ position: new google.maps.LatLng(41.725, -71.433333), map: map });
