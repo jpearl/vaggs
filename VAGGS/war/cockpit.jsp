@@ -7,16 +7,31 @@
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
     </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk&sensor=false">
-    </script>
+    <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk&sensor=false"></script>
     <script type="text/javascript">
-      
+      var route;
+      var transponder = 0;
       var overlay;
 
       PVDOverlay.prototype = new google.maps.OverlayView();
 
+      function TransponderCall() {
+        var tCode = transponder;
+        $.getJSON("route?transponder=" + tCode, function(json) {
+          console.log("Got route info for transponder code: " + tCode);
+          route = json;
+        }).complete(function() {
+          setTimeout(TransponderCall, 2500);
+        }).error(function() {
+          console.log("Failed to get route info for transponder code: " + tCode);
+        });
+      }
+      
       function initialize() {
+        $.ajax({cache:false});
+        TransponderCall();
+        
         var myLatLng = new google.maps.LatLng(41.7258, -71.4368);
         var mapOptions = {
           zoom: 14,

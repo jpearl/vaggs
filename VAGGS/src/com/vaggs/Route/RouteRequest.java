@@ -8,10 +8,24 @@ package com.vaggs.Route;
  */
 public class RouteRequest {
 	private Route route = null;
-	private final String transponderCode;
+	private final int transponderCode;
 	
-	public RouteRequest(String transponderCode) {
+	public RouteRequest(int transponderCode) {
+		if(!CheckTransponderCode(transponderCode)) 
+			throw new IllegalArgumentException("Invalid Transponder Code");
 		this.transponderCode = transponderCode;
+	}
+	
+	/**
+	 * Private method for checking validity of Transponder Codes
+	 * @return true if the argument is between the octal numbers 0000 and 7777
+	 */
+	boolean CheckTransponderCode(int code) {
+		for(int i = 0; i < 3; i++) {
+			if(code % 10 > 7) return false;
+			code /= 10;
+		}
+		return code != 0;
 	}
 	
 	/**
@@ -40,7 +54,7 @@ public class RouteRequest {
 	/**
 	 * @return the transponderCode
 	 */
-	public String getTransponderCode() {
+	public int getTransponderCode() {
 		return transponderCode;
 	}
 

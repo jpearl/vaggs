@@ -35,6 +35,7 @@
     <include path="/airports/*.png" /> <!-- for airport diagrams -->
     <include path="/favicon.ico" />
     <include path="/index.html" />
+    <include path="/jquery-1.9.1.min.js" />
   </static-files>
   
   <resource-files>
