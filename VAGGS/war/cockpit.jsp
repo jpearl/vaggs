@@ -10,17 +10,29 @@
     <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk&sensor=false"></script>
     <script type="text/javascript">
-      var route;
-      var transponder = 0;
+      var taxiPath;
+      var transponder = -1;
       var overlay;
 
       PVDOverlay.prototype = new google.maps.OverlayView();
 
+      function LatLng(lat, lng) {
+        return new google.maps.LatLng(lat, lng);
+      }
+      
+      function UpdateRoute(route) {
+        var pts = taxiPath.getPath();
+        pts.clear();
+        route.pts.forEach(function(pt) {
+          pts.push(LatLng(pt.Lat, pt.Lng));
+        });
+      }
+      
       function TransponderCall() {
         var tCode = transponder;
         $.getJSON("route?transponder=" + tCode, function(json) {
           console.log("Got route info for transponder code: " + tCode);
-          route = json;
+          UpdateRoute(json);
         }).complete(function() {
           setTimeout(TransponderCall, 2500);
         }).error(function() {
@@ -30,28 +42,30 @@
       
       function initialize() {
         $.ajax({cache:false});
-        TransponderCall();
-        
-        var myLatLng = new google.maps.LatLng(41.7258, -71.4368);
-        var mapOptions = {
-          zoom: 14,
-          center: myLatLng,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
 
-        var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+          zoom: 14,
+          center: LatLng(41.7258, -71.4368),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
         
         //sanity check for coordinates
-        new google.maps.Marker({ position: new google.maps.LatLng(41.725, -71.433333), map: map });
-
-        var swBound = new google.maps.LatLng(41.7087976, -71.44134);
-        var neBound = new google.maps.LatLng(41.73783, -71.41615);
+        //new google.maps.Marker({ position: LatLng(41.725, -71.433333), map: map });
         
-        var bounds = new google.maps.LatLngBounds(swBound, neBound);
-
-        //kpvd airport diagram
+        //airport diagram
         var srcImage = 'airports/pvd2.png';
-        overlay = new PVDOverlay(bounds, srcImage, map);
+        overlay = new PVDOverlay(new google.maps.LatLngBounds(LatLng(41.7087976, -71.44134), LatLng(41.73783, -71.41615)), srcImage, map);
+
+        // taxiPath objects
+        taxiPath = new google.maps.Polyline({
+          strokeColor: "#FF00000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          map: map,
+        });
+        
+        // Start making async calls for route data
+        TransponderCall();
       }
 
       function PVDOverlay(bounds, image, map) {
