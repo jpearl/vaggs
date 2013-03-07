@@ -2,7 +2,6 @@ package com.vaggs.Servlets;
 
 import java.io.*;
 import javax.servlet.http.*;
-
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Utils.LatLng;

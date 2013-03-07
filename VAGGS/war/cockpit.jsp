@@ -20,19 +20,15 @@
         return new google.maps.LatLng(lat, lng);
       }
       
-      function UpdateRoute(route) {
-        var pts = taxiPath.getPath();
-        pts.clear();
-        route.pts.forEach(function(pt) {
-          pts.push(LatLng(pt.Lat, pt.Lng));
-        });
-      }
-      
       function TransponderCall() {
         var tCode = transponder;
         $.getJSON("route?transponder=" + tCode, function(json) {
           console.log("Got route info for transponder code: " + tCode);
-          UpdateRoute(json);
+          var pts = taxiPath.getPath();
+          pts.clear();
+          route.pts.forEach(function(pt) {
+            pts.push(LatLng(pt.Lat, pt.Lng));
+          });
         }).complete(function() {
           setTimeout(TransponderCall, 2500);
         }).error(function() {
