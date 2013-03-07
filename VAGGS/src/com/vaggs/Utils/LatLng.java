@@ -1,19 +1,19 @@
 package com.vaggs.Utils;
 
 public class LatLng {
-	private float lat;
-	private float lng;
+	private double lat;
+	private double lng;
 	
-	public LatLng(float lat, float lng) {
+	public LatLng(double lat, double lng) {
 		this.lat = lat;
 		this.lng = lng;
 	}
 	
-	public float getLat() {
+	public double getLat() {
 		return lat;
 	}
 	
-	public float getLng() {
+	public double getLng() {
 		return lng;
 	}
 	
