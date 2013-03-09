@@ -13,6 +13,8 @@ public class RouteServ extends HttpServlet {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
+		int transponder = Integer.parseInt(req.getParameter("transponder"));
+
 		JSONWriter writer = new JSONWriter(resp.getWriter());
 		try {
 			writer.object();
