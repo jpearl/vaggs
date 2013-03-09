@@ -4,6 +4,8 @@
 
 VAGGS/war/WEB-INF/appengine-generated/
 VAGGS/war/WEB-INF/classes/
+VAGGS/war/WEB-INF/lib/datanucleus-*.jar
+VAGGS/war/WEB-INF/lib/appengine-*.jar
 
 
 #################
