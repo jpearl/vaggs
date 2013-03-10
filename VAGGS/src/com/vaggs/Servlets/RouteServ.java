@@ -4,6 +4,7 @@ import java.io.*;
 import javax.servlet.http.*;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
+import com.vaggs.Route.Waypoint;
 import com.vaggs.Utils.LatLng;
 
 @SuppressWarnings("serial")
@@ -20,21 +21,23 @@ public class RouteServ extends HttpServlet {
 			writer.object();
 				writer.key("pts");
 				writer.array();
-					writeLatLng(writer, new LatLng(41.7258, -71.4368));
-					writeLatLng(writer, new LatLng(41.7087976, -71.44134));
-					writeLatLng(writer, new LatLng(41.73783, -71.41615));
-					writeLatLng(writer, new LatLng(41.725, -71.433333));
+					writePoint(writer, new Waypoint(new LatLng(41.7258, -71.4368), true));
+					writePoint(writer, new Waypoint(new LatLng(41.7087976, -71.44134), false));
+					writePoint(writer, new Waypoint(new LatLng(41.73783, -71.41615), false));
+					writePoint(writer, new Waypoint(new LatLng(41.725, -71.433333), true));
 				writer.endArray();
 			writer.endObject();
 		} catch (JSONException e) { e.printStackTrace(); }
 	}
 	
-	void writeLatLng(JSONWriter writer, LatLng pt) throws JSONException {
+	void writePoint(JSONWriter writer, Waypoint pt) throws JSONException {
 		writer.object();
 		writer.key("Lat");
-		writer.value(pt.getLat());
+		writer.value(pt.getPoint().getLat());
 		writer.key("Lng");
-		writer.value(pt.getLng());
+		writer.value(pt.getPoint().getLng());
+		writer.key("Holdshort");
+		writer.value(pt.isHoldShort());
 		writer.endObject();
 	}
 }
