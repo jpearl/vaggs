@@ -1,5 +1,8 @@
 package com.vaggs.Utils;
 
+import com.googlecode.objectify.annotation.Embed;
+
+@Embed
 public class LatLng {
 	private double lat;
 	private double lng;

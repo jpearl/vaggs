@@ -4,10 +4,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
+@Entity
 public class FavoriteRoutes {
-	private String airport = "";
-	private List<Route>	routes = null;
+	@Id private String airport;
+	private List<Route>	routes;
+	
+	@SuppressWarnings("unused")
+    private FavoriteRoutes() {
+		airport = "";
+		routes = null;
+	}
 	
 	public FavoriteRoutes(String airport) {
 		this.airport = airport;

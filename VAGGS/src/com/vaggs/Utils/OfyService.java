@@ -1,4 +1,4 @@
-package com.vaggs.Objectify;
+package com.vaggs.Utils;
 
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;

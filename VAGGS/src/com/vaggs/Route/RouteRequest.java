@@ -1,14 +1,25 @@
 package com.vaggs.Route;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
+
 /**
  * A request object for a route from a pilot
  * @author Josh Pearl
  *
  * TODO: determine if we need methods for "change request"
  */
+@Entity
 public class RouteRequest {
-	private Route route = null;
-	private final int transponderCode;
+	@Id Long Id;
+	private Route route;
+	@Index private int transponderCode;
+	
+	private RouteRequest() {
+		transponderCode = -1;
+		route = null;
+	}
 	
 	public RouteRequest(int transponderCode) {
 		if(!CheckTransponderCode(transponderCode)) 

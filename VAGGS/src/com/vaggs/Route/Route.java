@@ -4,15 +4,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
 /**
  * A route for a plane to follow
  * @author Josh Pearl
  *
  */
+@Entity
 public class Route implements Iterable<Waypoint>{
+	@Id Long id; 
 	private List<Waypoint> route = null;
-	
 	
 	public Route() {
 		route = Lists.newArrayList();

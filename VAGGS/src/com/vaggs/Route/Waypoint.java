@@ -1,5 +1,6 @@
 package com.vaggs.Route;
 
+import com.googlecode.objectify.annotation.Embed;
 import com.vaggs.Utils.LatLng;
 
 /**
@@ -7,6 +8,7 @@ import com.vaggs.Utils.LatLng;
  * @author Josh Pearl
  *
  */
+@Embed
 public class Waypoint {
 	private LatLng point; /* the physical location of the waypoint */
 	private boolean holdShort; /* if the pilot must hold short of this point */
