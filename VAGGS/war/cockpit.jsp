@@ -13,6 +13,10 @@
       var taxiPath;
       var transponder = -1;
       var overlay;
+      var taxiRouteJson = "";
+      var taxiRouteOptions;
+      var map;
+      var holdshortMarkers = [];
 
       PVDOverlay.prototype = new google.maps.OverlayView();
 
@@ -20,15 +24,50 @@
         return new google.maps.LatLng(lat, lng);
       }
       
+      function acknowledge_route() {
+        //play some sound as an audio alert
+        confirm("Please acknowledge route");
+      }
+      
       function TransponderCall() {
         var tCode = transponder;
-        $.getJSON("route?transponder=" + tCode, function(json) {
+        $.getJSON("route?transponder=" + tCode, function(route) {
           console.log("Got route info for transponder code: " + tCode);
-          var pts = taxiPath.getPath();
-          pts.clear();
-          route.pts.forEach(function(pt) {
-            pts.push(LatLng(pt.Lat, pt.Lng));
-          });
+          //check if received a new route
+          if (taxiRouteJson != JSON.stringify(route)) {
+            taxiRouteJson = JSON.stringify(route);
+            var pts = taxiPath.getPath();
+            //clear old taxipath
+            pts.clear();
+            //clear old hold shorts
+            for(i in holdshortMarkers) {
+              holdshortMarkers[i].setMap(null);
+            }
+            holdshortMarkers.length = 0;
+             
+            route.pts.forEach(function(pt) {
+              pts.push(LatLng(pt.Lat, pt.Lng));
+              if(pt.Holdshort) {
+                  var holdshortMarker = new google.maps.Marker({
+                      icon: {
+                          path: 'M -5,0 0,-5 5,0 0,5 z',
+                          strokeColor: '#F00',
+                          fillColor: '#F00',
+                          fillOpacity: 1,
+                      },
+                      position: LatLng(pt.Lat, pt.Lng),
+                      map: map,
+                      clickable: false,
+                    });
+                  holdshortMarkers.push(holdshortMarker);
+              }
+            });
+              
+              
+            //make pilot acknowledge new route
+            console.log("New Route. Must acknowledge.");
+            acknowledge_route(); 
+          }
         }).complete(function() {
           setTimeout(TransponderCall, 2500);
         }).error(function() {
@@ -39,10 +78,16 @@
       function initialize() {
         $.ajax({cache:false});
 
-        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+        map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 14,
           center: LatLng(41.7258, -71.4368),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          disableDefaultUI: true,
+          styles: [{
+            elementType: 'labels',
+            featureType: 'poi',
+            stylers: [ { visibility: 'off' } ]
+          }]
         });
         
         //sanity check for coordinates
@@ -53,12 +98,14 @@
         overlay = new PVDOverlay(new google.maps.LatLngBounds(LatLng(41.7087976, -71.44134), LatLng(41.73783, -71.41615)), srcImage, map);
 
         // taxiPath objects
-        taxiPath = new google.maps.Polyline({
-          strokeColor: "#FF00000",
+        taxiRouteOptions = {
+          strokeColor: "#00FF00",
           strokeOpacity: 1.0,
-          strokeWeight: 2,
+          strokeWeight: 3,
           map: map,
-        });
+          clickable: false,
+        };
+        taxiPath = new google.maps.Polyline(taxiRouteOptions);
         
         // Start making async calls for route data
         TransponderCall();
