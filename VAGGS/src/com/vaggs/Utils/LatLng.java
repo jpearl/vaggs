@@ -7,6 +7,11 @@ public class LatLng {
 	private double lat;
 	private double lng;
 	
+	private LatLng() {
+		lat = -1;
+		lng = -1;
+	}
+	
 	public LatLng(double lat, double lng) {
 		this.lat = lat;
 		this.lng = lng;

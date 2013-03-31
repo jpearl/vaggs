@@ -7,6 +7,7 @@ import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.FavoriteRoutes;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.RouteRequest;
+import com.vaggs.Route.Transponder;
 
 public class OfyService {
     static {
@@ -14,6 +15,7 @@ public class OfyService {
             factory().register(Airport.class);
             factory().register(RouteRequest.class);
             factory().register(Route.class);
+            factory().register(Transponder.class);
     }
 
     public static Objectify ofy() {

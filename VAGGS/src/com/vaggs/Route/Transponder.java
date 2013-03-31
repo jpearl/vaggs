@@ -1,11 +1,15 @@
 package com.vaggs.Route;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+
 /**
  * An object that represents a transponder code
  */
+@Entity
 public class Transponder {
 	private Route route = null;
-	private final int code;
+	@Id private long code;
 	
 	public static Transponder Parse(String code) {
 		try {
@@ -15,7 +19,11 @@ public class Transponder {
 		}
 	}
 	
-	private Transponder(int code) {
+	private Transponder() {
+		code = -1;
+	}
+	
+	public Transponder(int code) {
 		if(!CheckTransponderCode(code)) 
 			throw new IllegalArgumentException("Invalid Transponder Code");
 		this.code = code;
@@ -59,7 +67,7 @@ public class Transponder {
 	/**
 	 * @return the transponderCode
 	 */
-	public int getTransponderCode() {
+	public long getTransponderCode() {
 		return code;
 	}
 }
