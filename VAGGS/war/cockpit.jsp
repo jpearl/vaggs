@@ -17,6 +17,10 @@
       var taxiRouteOptions;
       var map;
       var holdshortMarkers = [];
+      var allowedBounds = new google.maps.	LatLngBounds(new google.maps.LatLng
+        (41.7125479, -71.44203186),new google.maps.LatLng(41.7336318, -71.4168834));
+      var minZoomLevel = 14;
+      var maxZoomLevel = 16;
 
       PVDOverlay.prototype = new google.maps.OverlayView();
 
@@ -26,7 +30,7 @@
       
       function acknowledge_route() {
         //play some sound as an audio alert
-        confirm("Please acknowledge route");
+        confirm("Please acknowledge route.");
       }
       
       function TransponderCall() {
@@ -75,9 +79,60 @@
         });
       }
       
+      function ButtonInit(buttonDiv, map) {
+
+        buttonDiv.style.padding = '5px';
+
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = 'white';
+        controlUI.style.borderStyle = 'solid';
+        controlUI.style.borderWidth = '1px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.textAlign = 'center';
+        buttonDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        var controlText = document.createElement('div');
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '12px';
+        controlText.style.paddingLeft = '4px';
+        controlText.style.paddingRight = '4px';
+        controlText.innerHTML = '<b>Request Route</b>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listener
+        // Start making async calls for route data
+        google.maps.event.addDomListener(controlUI, 'click', TransponderCall);
+
+      }
+      
+      function checkBounds(){
+        if(! allowedBounds.contains(map.getCenter())) {
+ 	      var C = map.getCenter();
+    	  var X = C.lng();
+   		  var Y = C.lat();
+
+    	  var AmaxX = allowedBounds.getNorthEast().lng();
+      	  var AmaxY = allowedBounds.getNorthEast().lat();
+      	  var AminX = allowedBounds.getSouthWest().lng();
+      	  var AminY = allowedBounds.getSouthWest().lat();
+
+   	      if (X < AminX) {X = AminX;}
+    	  if (X > AmaxX) {X = AmaxX;}
+          if (Y < AminY) {Y = AminY;}
+          if (Y > AmaxY) {Y = AmaxY;}
+
+          map.setCenter(new google.maps.LatLng(Y,X));
+        }
+      }
+      
+      
       function initialize() {
         $.ajax({cache:false});
-
+        
+        transponder = prompt("Please enter your transponder code.");
+              
         map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 14,
           center: LatLng(41.7258, -71.4368),
@@ -107,8 +162,17 @@
         };
         taxiPath = new google.maps.Polyline(taxiRouteOptions);
         
-        // Start making async calls for route data
-        TransponderCall();
+        var buttonDiv = document.createElement('div');
+        var button = new ButtonInit(buttonDiv,map);
+        
+        buttonDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonDiv);
+        
+        google.maps.event.addListener(map,'center_changed',function() { checkBounds(); });
+        google.maps.event.addListener(map, 'zoom_changed', function() {
+          if (map.getZoom() < minZoomLevel) map.setZoom(minZoomLevel);
+          if (map.getZoom() > maxZoomLevel) map.setZoom(maxZoomLevel);
+        });
       }
 
       function PVDOverlay(bounds, image, map) {
@@ -166,6 +230,10 @@
         // Retrieve the southwest and northeast coordinates of this overlay
         // in latlngs and convert them to pixels coordinates.
         // We'll use these coordinates to resize the DIV.
+        
+        //swBounds = this.bounds_.getSouthWest();
+        //neBounds = this.bounds_.getNorthEast();
+        
         var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
         var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
 
