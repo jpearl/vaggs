@@ -12,31 +12,15 @@ import com.googlecode.objectify.annotation.Index;
  */
 @Entity
 public class RouteRequest {
-	@Id Long Id;
-	private Route route;
-	@Index private int transponderCode;
+	@Id long Id;
+	@Index private Transponder transponder;
 	
 	private RouteRequest() {
-		transponderCode = -1;
-		route = null;
+		transponder = null;
 	}
 	
-	public RouteRequest(int transponderCode) {
-		if(!CheckTransponderCode(transponderCode)) 
-			throw new IllegalArgumentException("Invalid Transponder Code");
-		this.transponderCode = transponderCode;
-	}
-	
-	/**
-	 * Private method for checking validity of Transponder Codes
-	 * @return true if the argument is between the octal numbers 0000 and 7777
-	 */
-	boolean CheckTransponderCode(int code) {
-		for(int i = 0; i < 3; i++) {
-			if(code % 10 > 7) return false;
-			code /= 10;
-		}
-		return code != 0;
+	public RouteRequest(int tCode) {
+		this.transponder = new Transponder(tCode);
 	}
 	
 	/**
@@ -45,29 +29,20 @@ public class RouteRequest {
 	 * false otherwise
 	 */
 	public boolean hasRoute() {
-		return null != route;
+		return transponder != null && transponder.hasRoute();
 	}
 
 	/**
 	 * @return the route
 	 */
 	public Route getRoute() {
-		return route;
+		return transponder == null ? null : transponder.getRoute();
 	}
-
-	/**
-	 * @param route the route to set
-	 */
-	public void setRoute(Route route) {
-		this.route = route;
-	}
-
-	/**
-	 * @return the transponderCode
-	 */
-	public int getTransponderCode() {
-		return transponderCode;
-	}
-
 	
+	/**
+	 * @return the transponder object
+	 */
+	public Transponder getTransponder() {
+		return transponder;	
+	}
 }
