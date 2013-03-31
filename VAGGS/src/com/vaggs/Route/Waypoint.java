@@ -30,13 +30,10 @@ public class Waypoint {
 		return point;
 	}
 
-
 	/**
 	 * @return if the pilot must hold short of this point
 	 */
 	public boolean isHoldShort() {
 		return holdShort;
 	}
-	
-	
 }
