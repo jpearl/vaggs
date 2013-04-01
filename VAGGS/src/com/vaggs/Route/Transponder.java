@@ -25,7 +25,7 @@ public class Transponder {
 	
 	public Transponder(int code) {
 		if(!CheckTransponderCode(code)) 
-			throw new IllegalArgumentException("Invalid Transponder Code");
+			throw new IllegalArgumentException("Invalid Transponder Code: " + code);
 		this.code = code;
 	}
 	
@@ -38,7 +38,7 @@ public class Transponder {
 			if(code % 10 > 7) return false;
 			code /= 10;
 		}
-		return code != 0;
+		return code == 0;
 	}
 	
 	/**

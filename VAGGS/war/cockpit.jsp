@@ -132,6 +132,8 @@
         $.ajax({cache:false});
         
         transponder = prompt("Please enter your transponder code.");
+        //start the call to get the route
+        TransponderCall();
               
         map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 14,

@@ -16,6 +16,8 @@ public class OfyService {
             factory().register(RouteRequest.class);
             factory().register(Route.class);
             factory().register(Transponder.class);
+            
+            DebuggingDBObjects.createDBObjects();
     }
 
     public static Objectify ofy() {

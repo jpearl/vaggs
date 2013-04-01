@@ -1,20 +1,22 @@
 package com.vaggs.Route;
 
+import static com.vaggs.Utils.OfyService.ofy;
+
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.cmd.LoadType;
-
-import static com.vaggs.Utils.OfyService.ofy;
 
 /**
  * A route for a plane to follow
  * @author Hawkwood
  *
  */
+@Embed
 @Entity
 public class Route implements Iterable<Waypoint>{
 	@Id Long id; 
@@ -24,7 +26,9 @@ public class Route implements Iterable<Waypoint>{
 		route = Lists.newArrayList();
 	}
 	
-	static Route ParseRoute(Waypoint start, String str) {
+	public static Route ParseRoute(Waypoint start, String str) {
+		if(start == null || str == null || str.isEmpty())
+			return new Route();
 		Route route = new Route();
 		char[] chars = str.toCharArray();
 		LoadType<Taxiway> q = ofy().load().type(Taxiway.class);
@@ -41,22 +45,14 @@ public class Route implements Iterable<Waypoint>{
 	}
 	
 	/**
+	 * TODO: change to private
 	 * Adds all waypoints in a list to the route
 	 */
-	void addWaypoints(List<Waypoint> pts) {
+	public void addWaypoints(List<Waypoint> pts) {
 		for(Waypoint pt : pts)
 			route.add(pt);
 	}
 
-	/**
-	 * Remove the specified point from the current route
-	 * such that forall indices i > {@code point}'s index j,
-	 * i = i - 1 
-	 * @param point the point to remove from the route
-	 */
-	public void removeWaypoint(Waypoint point) {
-		route.remove(point);
-	}
 	
 	/**
 	 * Get an iterator to the route in order of waypoints
