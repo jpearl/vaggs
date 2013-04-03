@@ -15,6 +15,10 @@
        <servlet-name>Route</servlet-name>
        <servlet-class>com.vaggs.Servlets.RouteServ</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ChannelRegistration</servlet-name>
+        <servlet-class>com.vaggs.Servlets.ChannelRegistration</servlet-class>
+    </servlet>
 	<servlet-mapping>
 		<servlet-name>VAGGS</servlet-name>
 		<url-pattern>/vaggs</url-pattern>
@@ -30,6 +34,10 @@
     <servlet-mapping>
         <servlet-name>Tower</servlet-name>
         <url-pattern>/tower</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChannelRegistration</servlet-name>
+        <url-pattern>/channelregistration</url-pattern>
     </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

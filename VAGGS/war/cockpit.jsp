@@ -8,6 +8,7 @@
       #map_canvas { height: 100% }
     </style>
     <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/_ah/channel/jsapi"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk&sensor=false"></script>
     <script type="text/javascript">
       var taxiPath;
@@ -33,12 +34,9 @@
         confirm("Please acknowledge route.");
       }
       
-      function TransponderCall() {
-        var tCode = transponder;
-        $.getJSON("route?transponder=" + tCode, function(route) {
-          console.log("Got route info for transponder code: " + tCode);
-          //check if received a new route
-          if (taxiRouteJson != JSON.stringify(route)) {
+      function displayRoute(route) {
+        //check if received a new route
+        if (taxiRouteJson != JSON.stringify(route)) {
             taxiRouteJson = JSON.stringify(route);
             var pts = taxiPath.getPath();
             //clear old taxipath
@@ -66,67 +64,40 @@
                   holdshortMarkers.push(holdshortMarker);
               }
             });
-              
-              
-            //make pilot acknowledge new route
-            console.log("New Route. Must acknowledge.");
-            acknowledge_route(); 
-          }
-        }).complete(function() {
-          setTimeout(TransponderCall, 2500);
+        }
+        //make pilot acknowledge new route
+        console.log("New Route. Must acknowledge.");
+        acknowledge_route(); 
+      }
+      
+      function TransponderCall() {
+        var tCode = transponder;
+        $.getJSON("route?transponder=" + tCode, function(route) {
+            console.log("Queried API and got route info for transponder code: " + tCode);
+            displayRoute(route);
         }).error(function() {
           console.log("Failed to get route info for transponder code: " + tCode);
         });
       }
       
-      function ButtonInit(buttonDiv, map) {
-
-        buttonDiv.style.padding = '5px';
-
-        // Set CSS for the control border
-        var controlUI = document.createElement('div');
-        controlUI.style.backgroundColor = 'white';
-        controlUI.style.borderStyle = 'solid';
-        controlUI.style.borderWidth = '1px';
-        controlUI.style.cursor = 'pointer';
-        controlUI.style.textAlign = 'center';
-        buttonDiv.appendChild(controlUI);
-
-        // Set CSS for the control interior
-        var controlText = document.createElement('div');
-        controlText.style.fontFamily = 'Arial,sans-serif';
-        controlText.style.fontSize = '12px';
-        controlText.style.paddingLeft = '4px';
-        controlText.style.paddingRight = '4px';
-        controlText.innerHTML = '<b>Request Route</b>';
-        controlUI.appendChild(controlText);
-
-        // Setup the click event listener
-        // Start making async calls for route data
-        google.maps.event.addDomListener(controlUI, 'click', TransponderCall);
-
-      }
       
-      function checkBounds(){
-        if(! allowedBounds.contains(map.getCenter())) {
- 	      var C = map.getCenter();
-    	  var X = C.lng();
-   		  var Y = C.lat();
-
-    	  var AmaxX = allowedBounds.getNorthEast().lng();
-      	  var AmaxY = allowedBounds.getNorthEast().lat();
-      	  var AminX = allowedBounds.getSouthWest().lng();
-      	  var AminY = allowedBounds.getSouthWest().lat();
-
-   	      if (X < AminX) {X = AminX;}
-    	  if (X > AmaxX) {X = AmaxX;}
-          if (Y < AminY) {Y = AminY;}
-          if (Y > AmaxY) {Y = AmaxY;}
-
-          map.setCenter(new google.maps.LatLng(Y,X));
-        }
+      /** Google Channel API functions **/
+      onOpened = function() {
+              connected = true;
+            };
+            
+      onMessage = function(message) {
+          route = $.parseJSON(message.data);
+          console.log("Got route info from channel for transponder code: " + transponder);
+              
+          //make pilot acknowledge new route
+          console.log("New Route. Must acknowledge.");
+          acknowledge_route(); 
       }
+            
       
+            
+    /* ============================ */
       
       function initialize() {
         $.ajax({cache:false});
@@ -134,6 +105,15 @@
         transponder = prompt("Please enter your transponder code.");
         //start the call to get the route
         TransponderCall();
+        
+        //register and set up the channel
+        $.getJSON("channelregistration?transponder=" + transponder, function(tokenResp) {
+            token = tokenResp.token;
+            channel = new goog.appengine.Channel(token);
+            socket = channel.open();
+            socket.onopen = onOpened;
+            socket.onmessage = onMessage;
+         });
               
         map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 14,
@@ -175,6 +155,54 @@
           if (map.getZoom() < minZoomLevel) map.setZoom(minZoomLevel);
           if (map.getZoom() > maxZoomLevel) map.setZoom(maxZoomLevel);
         });
+      }
+      
+      function ButtonInit(buttonDiv, map) {
+
+        buttonDiv.style.padding = '5px';
+
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = 'white';
+        controlUI.style.borderStyle = 'solid';
+        controlUI.style.borderWidth = '1px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.textAlign = 'center';
+        buttonDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        var controlText = document.createElement('div');
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '12px';
+        controlText.style.paddingLeft = '4px';
+        controlText.style.paddingRight = '4px';
+        controlText.innerHTML = '<b>Request Route</b>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listener
+        // Start making async calls for route data
+        google.maps.event.addDomListener(controlUI, 'click', TransponderCall);
+
+      }
+      
+      function checkBounds(){
+        if(! allowedBounds.contains(map.getCenter())) {
+          var C = map.getCenter();
+          var X = C.lng();
+          var Y = C.lat();
+
+          var AmaxX = allowedBounds.getNorthEast().lng();
+          var AmaxY = allowedBounds.getNorthEast().lat();
+          var AminX = allowedBounds.getSouthWest().lng();
+          var AminY = allowedBounds.getSouthWest().lat();
+
+          if (X < AminX) {X = AminX;}
+          if (X > AmaxX) {X = AmaxX;}
+          if (Y < AminY) {Y = AminY;}
+          if (Y > AmaxY) {Y = AmaxY;}
+
+          map.setCenter(new google.maps.LatLng(Y,X));
+        }
       }
 
       function PVDOverlay(bounds, image, map) {
@@ -260,5 +288,6 @@
       
         <div id="map_canvas" style="width:100%; height:100%;"></div>
   </div>
+  
   </body>
 </html>

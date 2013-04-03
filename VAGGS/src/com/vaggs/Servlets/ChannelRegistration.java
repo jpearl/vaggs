@@ -2,26 +2,25 @@ package com.vaggs.Servlets;
 
 import static com.vaggs.Utils.OfyService.ofy;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
-import com.vaggs.Route.Route;
 import com.vaggs.Route.Transponder;
-import com.vaggs.Utils.JsonRouteWriter;
 
 @SuppressWarnings("serial")
-public class RouteServ extends HttpServlet {
-	
+public class ChannelRegistration extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+			throws IOException, ServletException {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
@@ -41,16 +40,18 @@ public class RouteServ extends HttpServlet {
 			return;
 		}
 		
-		Route route = transponder.getRoute();
-		JsonRouteWriter.writeRoute(writer, route);
-		
-		//debugging: send via channel
-		System.out.println("sending to " + transponderQuery.toString());
 		ChannelService channelService = ChannelServiceFactory.getChannelService();
-	    channelService.sendMessage(new ChannelMessage(transponderQuery.toString(), JsonRouteWriter.writeRoute(route)));
+		String token = channelService.createChannel(String.valueOf(transponder.getTransponderCode()));
+		
+		try {
+			writer.object();
+				writer.key("token");
+			    writer.value(token);
+			writer.endObject();
+		} catch (JSONException e) { e.printStackTrace(); }
 	}
 	
-	private void writeError(JSONWriter writer, String error) {
+	void writeError(JSONWriter writer, String error) {
 		try {
 	        writer.object();
 		    	writer.key("error");

@@ -1,7 +1,11 @@
 package com.vaggs.Route;
 
+import com.google.appengine.api.channel.ChannelMessage;
+import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.vaggs.Utils.JsonRouteWriter;
 
 /**
  * An object that represents a transponder code
@@ -62,6 +66,11 @@ public class Transponder {
 	 */
 	public void setRoute(Route route) {
 		this.route = route;
+		
+		//update route on the client
+		ChannelService channelService = ChannelServiceFactory.getChannelService();
+	    channelService.sendMessage(new ChannelMessage(
+	    		String.valueOf(getTransponderCode()), JsonRouteWriter.writeRoute(route)));
 	}
 
 	/**
