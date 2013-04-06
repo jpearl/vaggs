@@ -22,8 +22,6 @@ public class Airport {
 	private String diagramImage;
 	private List<Taxiway> taxiways;
 	private List<Waypoint> routeStartingPoints;
-	
-	
 
 	@SuppressWarnings("unused")
     private Airport() {
@@ -60,11 +58,19 @@ public class Airport {
 	public List<Taxiway> getTaxiways() {
 		return taxiways;
 	}
+	
+	public void setTaxiways(List<Taxiway> taxiways) {
+		this.taxiways = taxiways;
+	}
 
 	/**
 	 * @return the routeStartingPoints
 	 */
 	public List<Waypoint> getRouteStartingPoints() {
 		return routeStartingPoints;
+	}
+	
+	public void setRouteStartingPoints(List<Waypoint> pts) {
+		routeStartingPoints = pts;
 	}
 }

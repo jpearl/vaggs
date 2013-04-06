@@ -69,5 +69,8 @@ public class Taxiway {
 	public List<Waypoint> getWaypoints() {
 		return pts;
 	}
-
+	
+	public void setWaypoints(List<Waypoint> pts) {
+		this.pts = pts;
+	}
 }
