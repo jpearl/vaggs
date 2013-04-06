@@ -18,6 +18,11 @@
       var minZoomLevel = 14;
       var maxZoomLevel = 16;
 
+      var airportID = "kpvd";
+      var taxiways = null;
+      var currTaxiway = 0;
+      var markers = new Array();
+      
       PVDOverlay.prototype = new google.maps.OverlayView();
 
       function LatLng(lat, lng) {
@@ -28,7 +33,14 @@
       function initialize() {
         $.ajax({cache:false});
         
-              
+        $.getJSON("airportInfo?airport=" + airportID, function(taxis) {
+          console.log("Queried API and got taxiway info");
+          taxiways = taxis;
+          displayTaxiway(0);
+        }).error(function() {
+          console.log("Failed to get taxiway info from server for " + airportID);
+        });
+        
         map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 14,
           center: LatLng(41.7258, -71.4368),
@@ -53,6 +65,35 @@
         });
       }
       
+      function containsPt(var taxiway, var pt) {
+        foreach(waypt in taxiway) {
+          if(waypt == pt) return true;
+        }
+        return false;
+      }
+      
+      function displayTaxiway(var i) {
+        if(taxiways != null) {
+          foreach(marker in markers)
+            marker.SetMap(null);
+          markers = new Array();
+        
+          foreach(pt in taxiways[i]) {
+            var marker = new google.maps.Marker({ position: LatLng(pt["Lat"], pt["Lng"]), map: map });
+            markers.push(marker);
+            var fnPt = pt;
+            google.maps.event.addListener(marker, 'click', function() {
+              var ans = -1;
+              for(int j = 0; j < taxiways.length; j++) {
+                if(containsPt(taxiways[j], fnPt) && i != j)
+                  ans = j;
+              }
+              if(ans >= 0)
+                displayTaxiway(ans);
+            });
+          }
+        }
+      }
             
       function checkBounds(){
         if(! allowedBounds.contains(map.getCenter())) {
