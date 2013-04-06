@@ -1,11 +1,11 @@
 package com.vaggs.Route;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.vaggs.Utils.LatLng;
 
 /**
  * Represents a Taxiway
@@ -15,7 +15,7 @@ import com.vaggs.Utils.LatLng;
 @Entity
 public class Taxiway {
 	@Id long name;
-	ArrayList<Waypoint> pts;
+	private List<Waypoint> pts;
 	
 	private Taxiway() {
 		this.pts = Lists.newArrayList();
@@ -62,4 +62,12 @@ public class Taxiway {
 		}
 		return ans;
 	}
+
+	/**
+	 * @return the pts
+	 */
+	public List<Waypoint> getWaypoints() {
+		return pts;
+	}
+
 }
