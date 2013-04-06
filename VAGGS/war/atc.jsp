@@ -33,7 +33,7 @@
       function initialize() {
         $.ajax({cache:false});
         
-        $.getJSON("airportInfo?airport=" + airportID, function(taxis) {
+        $.getJSON("airportinfo?airport=" + airportID, function(taxis) {
           console.log("Queried API and got taxiway info");
           taxiways = taxis;
           displayTaxiway(0);
@@ -65,33 +65,41 @@
         });
       }
       
-      function containsPt(var taxiway, var pt) {
-        foreach(waypt in taxiway) {
-          if(waypt == pt) return true;
-        }
-        return false;
+      function containsPt(taxiway, pt) {
+        var ans = false;
+        taxiway.forEach(function (waypt) {
+          if(comparePt(pt, waypt))
+            ans = true;
+        });
+        return ans;
       }
       
-      function displayTaxiway(var i) {
+      function comparePt(ptA, ptB) {
+        return ptA.Lat == ptB.Lat && ptA.Lng == ptB.Lng && ptA.isHoldshort == ptB.isHoldshort;
+      }
+      
+      function displayTaxiway (i) {
         if(taxiways != null) {
-          foreach(marker in markers)
-            marker.SetMap(null);
+          markers.forEach(function (marker) {
+            marker.setMap(null);
+          });
           markers = new Array();
         
-          foreach(pt in taxiways[i]) {
-            var marker = new google.maps.Marker({ position: LatLng(pt["Lat"], pt["Lng"]), map: map });
+          taxiways[i].forEach(function (pt) {
+            var marker = new google.maps.Marker({ position: LatLng(pt.Lat, pt.Lng), map: map });
             markers.push(marker);
-            var fnPt = pt;
             google.maps.event.addListener(marker, 'click', function() {
+              console.log("in click listener");
               var ans = -1;
-              for(int j = 0; j < taxiways.length; j++) {
-                if(containsPt(taxiways[j], fnPt) && i != j)
+              for( j = 0; j < taxiways.length; j++) {
+                if(containsPt(taxiways[j], pt) && i != j)
                   ans = j;
               }
+              console.log(ans);
               if(ans >= 0)
                 displayTaxiway(ans);
             });
-          }
+          });
         }
       }
             

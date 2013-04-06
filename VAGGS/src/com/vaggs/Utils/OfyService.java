@@ -7,6 +7,7 @@ import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.FavoriteRoutes;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.RouteRequest;
+import com.vaggs.Route.Taxiway;
 import com.vaggs.Route.Transponder;
 
 public class OfyService {
@@ -16,6 +17,7 @@ public class OfyService {
             factory().register(RouteRequest.class);
             factory().register(Route.class);
             factory().register(Transponder.class);
+            factory().register(Taxiway.class);
             
             DebuggingDBObjects.createDBObjects();
     }

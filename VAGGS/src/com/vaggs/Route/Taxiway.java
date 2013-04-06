@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
@@ -13,6 +14,7 @@ import com.googlecode.objectify.annotation.Id;
  *
  */
 @Entity
+@Embed
 public class Taxiway {
 	@Id long name;
 	private List<Waypoint> pts;

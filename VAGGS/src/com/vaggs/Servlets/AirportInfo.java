@@ -37,6 +37,7 @@ public class AirportInfo extends HttpServlet {
 		}
 		
 		Airport airport = ofy().load().type(Airport.class).id(query).get();
+		
 		if (null == airport) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             writeError(writer, "No airport: " + query);
@@ -78,11 +79,13 @@ public class AirportInfo extends HttpServlet {
 	}
 	
 	private void writeWaypoint(JSONWriter writer, Waypoint w) throws JSONException {
-		writer.key("Lat");
-		writer.value(w.getPoint().getLat());
-		writer.key("Lng");
-		writer.value(w.getPoint().getLng());
-		writer.key("isHoldshort");
-		writer.value(w.isHoldShort());
+		writer.object();
+			writer.key("Lat");
+			writer.value(w.getPoint().getLat());
+			writer.key("Lng");
+			writer.value(w.getPoint().getLng());
+			writer.key("isHoldshort");
+			writer.value(w.isHoldShort());
+		writer.endObject();
 	}
 }

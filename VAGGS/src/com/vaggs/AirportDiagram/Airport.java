@@ -2,11 +2,16 @@ package com.vaggs.AirportDiagram;
 
 import java.util.List;
 
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 import com.vaggs.Route.Taxiway;
 import com.vaggs.Route.Waypoint;
 import com.vaggs.Utils.LatLng;
+
+import static com.vaggs.Utils.OfyService.ofy;
 
 /**
  * An Airport Diagram Information
@@ -20,7 +25,7 @@ public class Airport {
 	private LatLng swBound;
 	private LatLng neBound;
 	private String diagramImage;
-	private List<Taxiway> taxiways;
+	@Load private List<Ref<Taxiway>> taxiways = Lists.newArrayList();
 	private List<Waypoint> routeStartingPoints;
 
 	@SuppressWarnings("unused")
@@ -56,11 +61,18 @@ public class Airport {
 	 * @return the taxiways
 	 */
 	public List<Taxiway> getTaxiways() {
-		return taxiways;
+		List<Taxiway> taxis = Lists.newArrayList();
+		for(Ref<Taxiway> ref : taxiways) {
+			taxis.add(ref.get());
+		}
+		return taxis;
 	}
 	
-	public void setTaxiways(List<Taxiway> taxiways) {
-		this.taxiways = taxiways;
+	public void setTaxiways(List<Taxiway> taxis) {
+		taxiways.clear();
+		for(Taxiway taxi : taxis) {
+			taxiways.add(Ref.create(ofy().save().entity(taxi).now()));
+		}
 	}
 
 	/**
