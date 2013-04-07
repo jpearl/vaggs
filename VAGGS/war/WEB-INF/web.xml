@@ -8,6 +8,10 @@
 	   <servlet-class>com.vaggs.Servlets.CockpitServ</servlet-class>
 	</servlet>
 	<servlet>
+	   <servlet-name>PostRoute</servlet-name>
+	   <servlet-class>com.vaggs.Servlets.PostRouteServ</servlet-class>
+	</servlet>
+	<servlet>
        <servlet-name>Tower</servlet-name>
        <servlet-class>com.vaggs.Servlets.TowerServ</servlet-class>
     </servlet>
@@ -26,6 +30,10 @@
 	<servlet-mapping>
 		<servlet-name>VAGGS</servlet-name>
 		<url-pattern>/vaggs</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PostRoute</servlet-name>
+		<url-pattern>/postroute</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
         <servlet-name>Cockpit</servlet-name>
