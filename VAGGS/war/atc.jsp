@@ -7,6 +7,7 @@
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
     </style>
+    
     <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="/_ah/channel/jsapi"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk&sensor=false"></script>
@@ -68,7 +69,7 @@
         polyLine = new google.maps.Polyline(taxiRouteOptions);
 
         var buttonDiv = document.createElement('div');
-        var button = new ButtonInit(buttonDiv,map);
+        var button = new ButtonInit(buttonDiv, map);
         
         buttonDiv.index = 1;
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonDiv);
@@ -99,7 +100,7 @@
         controlText.style.fontSize = '12px';
         controlText.style.paddingLeft = '4px';
         controlText.style.paddingRight = '4px';
-        controlText.innerHTML = '<b>Request Route</b>';
+        controlText.innerHTML = '<b>Send Route</b>';
         controlUI.appendChild(controlText);
 
         // Setup the click event listener
@@ -108,10 +109,12 @@
       }
       
       function sendRoute() {
-        $.post("/postroute", route,
-          function(){ console.log("Sent route!"); }, "json");
-        route = [];
-        polyLine.getPath().clear();
+        $.post("/postroute", JSON.stringify(route),
+          function(){
+            console.log("Sent route!");
+            route = [];
+            polyLine.getPath().clear(); 
+          }, "json");
       }
       
       function containsPt(taxiway, pt) {
