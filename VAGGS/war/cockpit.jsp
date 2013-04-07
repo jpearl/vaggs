@@ -182,7 +182,6 @@
         // Setup the click event listener
         // Start making async calls for route data
         google.maps.event.addDomListener(controlUI, 'click', TransponderCall);
-
       }
       
       function checkBounds(){

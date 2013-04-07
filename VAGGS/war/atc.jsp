@@ -21,15 +21,15 @@
       var airportID = "kpvd";
       var taxiways = null;
       var currTaxiway = 0;
-      var markers = new Array();
-      var polyLine;
+      var markers = [];
+      var polyLine = null;
+      var route = [];
       
       PVDOverlay.prototype = new google.maps.OverlayView();
 
       function LatLng(lat, lng) {
         return new google.maps.LatLng(lat, lng);
       }
-      
       
       function initialize() {
         $.ajax({cache:false});
@@ -67,11 +67,51 @@
         };
         polyLine = new google.maps.Polyline(taxiRouteOptions);
 
+        var buttonDiv = document.createElement('div');
+        var button = new ButtonInit(buttonDiv,map);
+        
+        buttonDiv.index = 1;
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonDiv);
+        
         google.maps.event.addListener(map,'center_changed',function() { checkBounds(); });
         google.maps.event.addListener(map, 'zoom_changed', function() {
           if (map.getZoom() < minZoomLevel) map.setZoom(minZoomLevel);
           if (map.getZoom() > maxZoomLevel) map.setZoom(maxZoomLevel);
         });
+      }
+      
+      function ButtonInit(buttonDiv, map) {
+
+        buttonDiv.style.padding = '5px';
+
+        // Set CSS for the control border
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = 'white';
+        controlUI.style.borderStyle = 'solid';
+        controlUI.style.borderWidth = '1px';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.textAlign = 'center';
+        buttonDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        var controlText = document.createElement('div');
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '12px';
+        controlText.style.paddingLeft = '4px';
+        controlText.style.paddingRight = '4px';
+        controlText.innerHTML = '<b>Request Route</b>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listener
+        // Start making async calls for route data
+        google.maps.event.addDomListener(controlUI, 'click', sendRoute);
+      }
+      
+      function sendRoute() {
+        $.post("/postroute", route,
+          function(){ console.log("Sent route!"); }, "json");
+        route = [];
+        polyLine.getPath().clear();
       }
       
       function containsPt(taxiway, pt) {
@@ -92,31 +132,34 @@
           markers.forEach(function (marker) {
             marker.setMap(null);
           });
-          markers = new Array();
-        
-          taxiways[i].forEach(function (pt) {
-            var latlng = LatLng(pt.Lat, pt.Lng);
-            var marker = new google.maps.Marker({ position: latlng, map: map });
-            markers.push(marker);
-            google.maps.event.addListener(marker, 'click', function() {           
-              var linePts = polyLine.getPath();
-              var lastPt = linePts.pop();
-              if(lastPt == null || !lastPt.equals(latlng)) {
-              	if(lastPt != null)	
-                	linePts.push(lastPt);
-                linePts.push(latlng);
-              }
-            
-              var ans = -1;
-              for( j = 0; j < taxiways.length; j++) {
-                if(containsPt(taxiways[j], pt) && i != j)
-                  ans = j;
-              }
-              console.log(ans);
-              if(ans >= 0)
+          markers = [];
+          
+          if(i >= 0 && i < taxiways.length) {
+            taxiways[i].forEach(function (pt) {
+              var latlng = LatLng(pt.Lat, pt.Lng);
+              var marker = new google.maps.Marker({ position: latlng, map: map });
+              markers.push(marker);
+              google.maps.event.addListener(marker, 'click', function() {           
+                var linePts = polyLine.getPath();
+                var lastPt = linePts.pop();
+                if(lastPt == null || !lastPt.equals(latlng)) {
+                  if(lastPt != null) 
+                    linePts.push(lastPt);
+                  linePts.push(latlng);
+                  route.push(pt);
+                } else
+                  route.pop();
+              
+                var ans = -1;
+                for( j = 0; j < taxiways.length; j++) {
+                  if(containsPt(taxiways[j], pt) && i != j)
+                    ans = j;
+                }
+                console.log(ans);
                 displayTaxiway(ans);
+              });
             });
-          });
+          }
         }
       }
             
