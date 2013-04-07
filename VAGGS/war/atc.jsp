@@ -95,14 +95,16 @@
           markers = new Array();
         
           taxiways[i].forEach(function (pt) {
-            var marker = new google.maps.Marker({ position: LatLng(pt.Lat, pt.Lng), map: map });
+            var latlng = LatLng(pt.Lat, pt.Lng);
+            var marker = new google.maps.Marker({ position: latlng, map: map });
             markers.push(marker);
-            google.maps.event.addListener(marker, 'click', function() {            
+            google.maps.event.addListener(marker, 'click', function() {           
               var linePts = polyLine.getPath();
               var lastPt = linePts.pop();
-              if(lastPt.Lat != pt.Lat || lastPt.Lng != pt.Lng) {
-                linePts.push(lastPt);
-                linePts.push(LatLng(pt.Lat, pt.Lng));
+              if(lastPt == null || !lastPt.equals(latlng)) {
+              	if(lastPt != null)	
+                	linePts.push(lastPt);
+                linePts.push(latlng);
               }
             
               var ans = -1;
