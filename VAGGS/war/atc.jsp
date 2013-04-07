@@ -22,6 +22,7 @@
       var taxiways = null;
       var currTaxiway = 0;
       var markers = new Array();
+      var polyLine;
       
       PVDOverlay.prototype = new google.maps.OverlayView();
 
@@ -53,10 +54,18 @@
           }]
         });
         
-        
         //airport diagram
         var srcImage = 'airports/pvd2.png';
         overlay = new PVDOverlay(new google.maps.LatLngBounds(LatLng(41.7087976, -71.44134), LatLng(41.73783, -71.41615)), srcImage, map);
+        
+        taxiRouteOptions = {
+          strokeColor: "#00FF00",
+          strokeOpacity: 1.0,
+          strokeWeight: 3,
+          map: map,
+          clickable: false,
+        };
+        polyLine = new google.maps.Polyline(taxiRouteOptions);
 
         google.maps.event.addListener(map,'center_changed',function() { checkBounds(); });
         google.maps.event.addListener(map, 'zoom_changed', function() {
@@ -88,8 +97,14 @@
           taxiways[i].forEach(function (pt) {
             var marker = new google.maps.Marker({ position: LatLng(pt.Lat, pt.Lng), map: map });
             markers.push(marker);
-            google.maps.event.addListener(marker, 'click', function() {
-              console.log("in click listener");
+            google.maps.event.addListener(marker, 'click', function() {            
+              var linePts = polyLine.getPath();
+              var lastPt = linePts.pop();
+              if(lastPt.Lat != pt.Lat || lastPt.Lng != pt.Lng) {
+                linePts.push(lastPt);
+                linePts.push(LatLng(pt.Lat, pt.Lng));
+              }
+            
               var ans = -1;
               for( j = 0; j < taxiways.length; j++) {
                 if(containsPt(taxiways[j], pt) && i != j)

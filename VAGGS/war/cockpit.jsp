@@ -39,7 +39,6 @@
         if (taxiRouteJson != JSON.stringify(route)) {
             taxiRouteJson = JSON.stringify(route);
             var pts = taxiPath.getPath();
-            //clear old taxipath
             pts.clear();
             //clear old hold shorts
             for(i in holdshortMarkers) {
@@ -64,10 +63,11 @@
                   holdshortMarkers.push(holdshortMarker);
               }
             });
+            
+          //make pilot acknowledge new route
+          console.log("New Route. Must acknowledge.");
+          acknowledge_route(); 
         }
-        //make pilot acknowledge new route
-        console.log("New Route. Must acknowledge.");
-        acknowledge_route(); 
       }
       
       function TransponderCall() {
