@@ -6,10 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.google.appengine.labs.repackaged.org.json.JSONTokener;
 import com.googlecode.objectify.annotation.Embed;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.cmd.LoadType;
+import com.vaggs.Utils.LatLng;
 
 /**
  * A route for a plane to follow
@@ -26,7 +31,7 @@ public class Route implements Iterable<Waypoint>{
 		route = Lists.newArrayList();
 	}
 	
-	public static Route ParseRoute(Waypoint start, String str) {
+	public static Route ParseRouteByTaxiways(Waypoint start, String str) {
 		if(start == null || str == null || str.isEmpty())
 			return new Route();
 		Route route = new Route();
@@ -41,6 +46,21 @@ public class Route implements Iterable<Waypoint>{
 			start = pt;
 		}
 		route.addWaypoints(prevTaxiway.PtsBetween(start, null));
+		return route;
+	}
+	
+	public static Route ParseRouteByWaypoints(String rt) throws JSONException {
+		JSONArray obj = new JSONArray(new JSONTokener(rt));
+		Route route = new Route();
+		List<Waypoint> waypoints = Lists.newArrayList();
+		int numWaypoints = obj.length();
+		for(int i=0; i<numWaypoints; i++) {
+			JSONObject point = obj.getJSONObject(i);
+			LatLng loc = new LatLng(point.getDouble("Lat"), point.getDouble("Lng"));
+			Waypoint p = new Waypoint(loc, point.getBoolean("isHoldshort"));
+			waypoints.add(p);
+		}
+		route.addWaypoints(waypoints);
 		return route;
 	}
 	

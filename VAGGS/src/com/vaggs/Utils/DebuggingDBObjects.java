@@ -13,7 +13,7 @@ public class DebuggingDBObjects {
 
 	public static void createDBObjects () {
 		/* Transponder Code = 1 */
-		Route debugRoute = Route.ParseRoute((new Waypoint(new LatLng(41.7258, -71.4368), false)), "");
+		Route debugRoute = Route.ParseRouteByTaxiways((new Waypoint(new LatLng(41.7258, -71.4368), false)), "");
 		debugRoute.addWaypoints(Arrays.asList(
 				new Waypoint(new LatLng(41.7258, -71.4368), false),
 				new Waypoint(new LatLng(41.7087976, -71.44134), false),
