@@ -18,6 +18,7 @@ public class OfyService {
             factory().register(Route.class);
             factory().register(Transponder.class);
             factory().register(Taxiway.class);
+            factory().register(AtcUser.class);
             
             DebuggingDBObjects.createDBObjects();
     }

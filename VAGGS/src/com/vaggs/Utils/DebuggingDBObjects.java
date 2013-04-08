@@ -7,7 +7,10 @@ import java.util.Arrays;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.vaggs.AirportDiagram.Airport;
-import com.vaggs.Route.*;
+import com.vaggs.Route.Route;
+import com.vaggs.Route.Taxiway;
+import com.vaggs.Route.Transponder;
+import com.vaggs.Route.Waypoint;
 
 public class DebuggingDBObjects {
 
@@ -53,5 +56,14 @@ public class DebuggingDBObjects {
 		kpvd.setRouteStartingPoints(Arrays.asList(new Waypoint(new LatLng(41.7258, -71.4368), false)));
 		
 		ofy().save().entities(kpvd).now();
+		
+		AtcUser josh = new AtcUser("Josh Pearl");
+		AtcUser hawk = new AtcUser("Hawkwood");
+		AtcUser max = new AtcUser("The real slim shady");
+		
+		ofy().save().entity(josh).now();
+		ofy().save().entity(hawk).now();
+		ofy().save().entity(max).now();
+		
 	}
 }
