@@ -12,7 +12,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.vaggs.Route.Route;
-import com.vaggs.Route.Waypoint;
+import com.vaggs.Utils.AtcUser;
 
 @SuppressWarnings("serial")
 public class PostRouteServ extends HttpServlet {
@@ -20,8 +20,8 @@ public class PostRouteServ extends HttpServlet {
               throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
-
-        if (user != null) {
+        
+        if (user != null && AtcUser.GetUser(user.getNickname()) != null) {
 			StringBuffer sb = new StringBuffer();
 			String line = null;
 			try {
@@ -30,7 +30,6 @@ public class PostRouteServ extends HttpServlet {
 			    	sb.append(line);
 			} catch (Exception e) { e.printStackTrace(); }
 			String routeStr = sb.toString();
-			System.err.println("got: " + routeStr);
 			
             if(routeStr == null || routeStr.equals("[]")) {
             	resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad route");
@@ -39,10 +38,8 @@ public class PostRouteServ extends HttpServlet {
 
             try {
             	Route route = Route.ParseRouteByWaypoints(routeStr);
-            	System.err.println("parsed");
-            	for(Waypoint p : route) {
-            		System.err.println(p.getPoint().toString());
-            	}
+            	//TODO: save the route
+            	
             } catch (JSONException e) {
             	resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             	return;
@@ -52,7 +49,7 @@ public class PostRouteServ extends HttpServlet {
             
             
         } else {
-            resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
+        	resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
     

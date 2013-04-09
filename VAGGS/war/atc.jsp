@@ -109,13 +109,32 @@
       }
       
       function sendRoute() {
-        $.post("/postroute", JSON.stringify(route),
+       /* $.post("/postroute", JSON.stringify(route),
           function(){
             console.log("Sent route!");
             route = [];
             polyLine.getPath().clear(); 
-          }, "json");
+            //TODO: clear the markers
+          });*/
+      
+          $.ajax({
+            type: "POST",
+            url: '/postroute',
+            data: JSON.stringify(route),
+            success: function(){
+                console.log("Sent route!");
+                route = [];
+                polyLine.getPath().clear(); 
+                //TODO: clear the markers
+              },
+            statusCode: {
+                403: function() {
+                    alert('Error: Not authenticated');
+                }
+            }
+          });
       }
+      
       
       function containsPt(taxiway, pt) {
         var ans = false;
