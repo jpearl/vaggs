@@ -6,7 +6,6 @@ import com.googlecode.objectify.ObjectifyService;
 import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.FavoriteRoutes;
 import com.vaggs.Route.Route;
-import com.vaggs.Route.RouteRequest;
 import com.vaggs.Route.Taxiway;
 import com.vaggs.Route.Transponder;
 
@@ -14,7 +13,6 @@ public class OfyService {
     static {
             factory().register(FavoriteRoutes.class);
             factory().register(Airport.class);
-            factory().register(RouteRequest.class);
             factory().register(Route.class);
             factory().register(Transponder.class);
             factory().register(Taxiway.class);

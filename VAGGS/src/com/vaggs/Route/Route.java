@@ -49,8 +49,7 @@ public class Route implements Iterable<Waypoint>{
 		return route;
 	}
 	
-	public static Route ParseRouteByWaypoints(String rt) throws JSONException {
-		JSONArray obj = new JSONArray(new JSONTokener(rt));
+	public static Route ParseRouteByWaypoints(JSONArray obj) throws JSONException {
 		Route route = new Route();
 		List<Waypoint> waypoints = Lists.newArrayList();
 		int numWaypoints = obj.length();

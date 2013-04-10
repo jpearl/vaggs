@@ -109,23 +109,25 @@
       }
       
       function sendRoute() {
-       /* $.post("/postroute", JSON.stringify(route),
+          /*
+          $.post("/postroute", JSON.stringify(route),
           function(){
             console.log("Sent route!");
             route = [];
             polyLine.getPath().clear(); 
             //TODO: clear the markers
-          });*/
-      
+          });
+          */
+          var tCode = prompt("Tranponder Code of Airplane")
           $.ajax({
             type: "POST",
             url: '/postroute',
-            data: JSON.stringify(route),
-            success: function(){
+            data: JSON.stringify({ "transponder" : tCode, "route" : route }),
+            success: function() {
                 console.log("Sent route!");
                 route = [];
                 polyLine.getPath().clear(); 
-                //TODO: clear the markers
+                displayTaxiway(0);
               },
             statusCode: {
                 403: function() {

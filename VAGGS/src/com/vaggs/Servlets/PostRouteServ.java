@@ -1,5 +1,7 @@
 package com.vaggs.Servlets;
 
+import static com.vaggs.Utils.OfyService.ofy;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -11,7 +13,10 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.google.appengine.labs.repackaged.org.json.JSONTokener;
 import com.vaggs.Route.Route;
+import com.vaggs.Route.Transponder;
 import com.vaggs.Utils.AtcUser;
 
 @SuppressWarnings("serial")
@@ -30,24 +35,22 @@ public class PostRouteServ extends HttpServlet {
 			    	sb.append(line);
 			} catch (Exception e) { e.printStackTrace(); }
 			String routeStr = sb.toString();
-			
-            if(routeStr == null || routeStr.equals("[]")) {
-            	resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad route");
-            	return;
-            }
-
+            
             try {
-            	Route route = Route.ParseRouteByWaypoints(routeStr);
-            	//TODO: save the route
-            	
+        		JSONObject obj = new JSONObject(new JSONTokener(routeStr));
+            	Route route = Route.ParseRouteByWaypoints(obj.getJSONArray("route"));
+            	Transponder transponder = Transponder.Parse(obj.getLong("transponder"));
+            	if(route == null) {
+            		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Route");
+            	} else if(transponder == null) {
+	            	resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Transponder Code out of range");
+            	} else {
+        			transponder.setRoute(route);
+                    resp.setStatus(HttpServletResponse.SC_OK);            		
+            	}
             } catch (JSONException e) {
             	resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-            	return;
-            	
             }
-            resp.setStatus(HttpServletResponse.SC_OK);
-            
-            
         } else {
         	resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }

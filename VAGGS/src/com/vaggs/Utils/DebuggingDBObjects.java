@@ -23,12 +23,8 @@ public class DebuggingDBObjects {
 				new Waypoint(new LatLng(41.73783, -71.41615), false),
 				new Waypoint(new LatLng(41.725, -71.433333), true)
 			));
-		Transponder debug = new Transponder(1);
-		Transponder debug2 = new Transponder(2);
-		debug.setRoute(debugRoute);
-		debug2.setRoute(debugRoute);
-		ofy().save().entity(debug).now();
-		ofy().save().entity(debug2).now();
+		Transponder.Parse(1).setRoute(debugRoute);
+		Transponder.Parse(2).setRoute(debugRoute);
 		
 		ArrayList<Taxiway> taxiways = Lists.newArrayList();
 		Taxiway taxiway = new Taxiway('e');

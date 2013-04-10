@@ -1,5 +1,9 @@
 package com.vaggs.Route;
 
+import static com.vaggs.Utils.OfyService.ofy;
+
+import java.util.Date;
+
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
@@ -14,35 +18,48 @@ import com.vaggs.Utils.JsonRouteWriter;
 public class Transponder {
 	private Route route = null;
 	@Id private long code;
+	private Date timeStamp;
 	
-	public static Transponder Parse(String code) {
-		try {
-			return new Transponder(Integer.parseInt(code));
-		} catch(Exception e) {
+	public static Transponder Parse(long code) {
+		if(!CheckTransponderCode(code)) 
 			return null;
-		}
+		Transponder transponder = ofy().load().type(Transponder.class).id(code).get();
+		if(transponder == null || transponder.timeStamp.before(getInvalidTime()));
+			transponder = new Transponder(code);
+		return transponder;
+	}
+
+	private static final long halfHourInMillis = 30 * 60 * 1000;  
+	private static Date getInvalidTime() {
+		Date time = new Date();
+		time.setTime(time.getTime() - halfHourInMillis);
+		return time;
 	}
 	
 	private Transponder() {
 		code = -1;
 	}
 	
-	public Transponder(int code) {
-		if(!CheckTransponderCode(code)) 
-			throw new IllegalArgumentException("Invalid Transponder Code: " + code);
+	private Transponder(long code) {
 		this.code = code;
+		ForceSave();
 	}
 	
 	/**
 	 * Private method for checking validity of Transponder Codes
 	 * @return true if the argument is between the octal numbers 0000 and 7777
 	 */
-	boolean CheckTransponderCode(int code) {
+	static boolean CheckTransponderCode(long code) {
 		for(int i = 0; i < 3; i++) {
 			if(code % 10 > 7) return false;
 			code /= 10;
 		}
 		return code == 0;
+	}
+	
+	public void ForceSave() {
+		timeStamp = new Date();
+		ofy().save().entity(this).now();
 	}
 	
 	/**
@@ -71,6 +88,8 @@ public class Transponder {
 		ChannelService channelService = ChannelServiceFactory.getChannelService();
 	    channelService.sendMessage(new ChannelMessage(
 	    		String.valueOf(getTransponderCode()), JsonRouteWriter.writeRoute(route)));
+
+	    ForceSave();
 	}
 
 	/**
