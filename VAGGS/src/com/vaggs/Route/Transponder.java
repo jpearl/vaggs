@@ -24,7 +24,7 @@ public class Transponder {
 		if(!CheckTransponderCode(code)) 
 			return null;
 		Transponder transponder = ofy().load().type(Transponder.class).id(code).get();
-		if(transponder == null || transponder.timeStamp.before(getInvalidTime()));
+		if(transponder == null || transponder.timeStamp.before(getInvalidTime()))
 			transponder = new Transponder(code);
 		return transponder;
 	}

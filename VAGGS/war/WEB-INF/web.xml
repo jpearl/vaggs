@@ -4,10 +4,6 @@
 		<servlet-class>com.vaggs.Servlets.VAGGSServ</servlet-class>
 	</servlet>
 	<servlet>
-	   <servlet-name>Cockpit</servlet-name>
-	   <servlet-class>com.vaggs.Servlets.CockpitServ</servlet-class>
-	</servlet>
-	<servlet>
 	   <servlet-name>PostRoute</servlet-name>
 	   <servlet-class>com.vaggs.Servlets.PostRouteServ</servlet-class>
 	</servlet>
@@ -17,7 +13,7 @@
     </servlet>
 	<servlet>
        <servlet-name>Route</servlet-name>
-       <servlet-class>com.vaggs.Servlets.RouteServ</servlet-class>
+      <servlet-class>com.vaggs.Servlets.RouteQueryServ</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ChannelRegistration</servlet-name>
@@ -35,10 +31,6 @@
 		<servlet-name>PostRoute</servlet-name>
 		<url-pattern>/postroute</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
-        <servlet-name>Cockpit</servlet-name>
-        <url-pattern>/cockpit</url-pattern>
-    </servlet-mapping>
 	<servlet-mapping>
         <servlet-name>Route</servlet-name>
         <url-pattern>/route</url-pattern>

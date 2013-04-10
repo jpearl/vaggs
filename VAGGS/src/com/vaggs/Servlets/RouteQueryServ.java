@@ -8,9 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.channel.ChannelMessage;
-import com.google.appengine.api.channel.ChannelService;
-import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Route.Route;
@@ -18,7 +15,7 @@ import com.vaggs.Route.Transponder;
 import com.vaggs.Utils.JsonRouteWriter;
 
 @SuppressWarnings("serial")
-public class RouteServ extends HttpServlet {
+public class RouteQueryServ extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -33,21 +30,14 @@ public class RouteServ extends HttpServlet {
 			writeError(writer, "Invalid request. Must query for a valid transponder");
 			return;
 		}
-		Long transponderQuery = Long.parseLong(req.getParameter("transponder"));
-		Transponder transponder = ofy().load().type(Transponder.class).id(transponderQuery).get();
+		
+		Transponder transponder = Transponder.Parse(Long.parseLong(req.getParameter("transponder")));
 		if(transponder == null) {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writeError(writer, "No transponder code: " + transponderQuery);
-			return;
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Transponder Code out of range");
+		} else if (transponder.hasRoute()){
+			Route route = transponder.getRoute();
+			JsonRouteWriter.writeRoute(writer, route);
 		}
-		
-		Route route = transponder.getRoute();
-		JsonRouteWriter.writeRoute(writer, route);
-		
-		//debugging: send via channel
-		System.out.println("sending to " + transponderQuery.toString());
-		ChannelService channelService = ChannelServiceFactory.getChannelService();
-	    channelService.sendMessage(new ChannelMessage(transponderQuery.toString(), JsonRouteWriter.writeRoute(route)));
 	}
 	
 	private void writeError(JSONWriter writer, String error) {

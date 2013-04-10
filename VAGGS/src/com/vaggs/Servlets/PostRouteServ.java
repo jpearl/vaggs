@@ -1,7 +1,5 @@
 package com.vaggs.Servlets;
 
-import static com.vaggs.Utils.OfyService.ofy;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 
