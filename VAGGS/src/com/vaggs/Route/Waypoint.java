@@ -12,15 +12,18 @@ import com.vaggs.Utils.LatLng;
 public class Waypoint {
 	private LatLng point; /* the physical location of the waypoint */
 	private boolean holdShort; /* if the pilot must hold short of this point */
+	private boolean intersection;
 	
 	private Waypoint() {
 		point = null;
 		holdShort = false;
+		intersection = false;
 	}
 	
-	public Waypoint(LatLng point, boolean holdShort) {
+	public Waypoint(LatLng point, boolean holdShort, boolean intersection) {
 		this.point = point;
 		this.holdShort = holdShort;
+		this.intersection = intersection;
 	}
 
 	/**
@@ -35,5 +38,9 @@ public class Waypoint {
 	 */
 	public boolean isHoldShort() {
 		return holdShort;
+	}
+	
+	public boolean isIntersection() {
+		return intersection;
 	}
 }
