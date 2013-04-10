@@ -63,10 +63,7 @@
                   holdshortMarkers.push(holdshortMarker);
               }
             });
-            
-          //make pilot acknowledge new route
-          console.log("New Route. Must acknowledge.");
-          acknowledge_route(); 
+            acknowledge_route(); 
         }
       }
       
@@ -87,12 +84,8 @@
             };
             
       onMessage = function(message) {
-          route = $.parseJSON(message.data);
           console.log("Got route info from channel for transponder code: " + transponder);
-              
-          //make pilot acknowledge new route
-          console.log("New Route. Must acknowledge.");
-          acknowledge_route(); 
+          displayRoute($.parseJSON(message.data));
       }
             
       
