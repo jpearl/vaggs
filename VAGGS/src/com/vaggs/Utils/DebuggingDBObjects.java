@@ -145,10 +145,10 @@ public class DebuggingDBObjects {
 		AtcUser josh = new AtcUser("josh@joshpearl.com");
 		AtcUser hawk = new AtcUser("dazerdude");
 		AtcUser max = new AtcUser("maxbulian");
+		AtcUser user1 = new AtcUser("user1");
+		AtcUser user2 = new AtcUser("user2");
 		
-		ofy().save().entity(josh).now();
-		ofy().save().entity(hawk).now();
-		ofy().save().entity(max).now();
+		ofy().save().entities(josh, hawk, max, user1, user2).now();
 		
 	}
 }

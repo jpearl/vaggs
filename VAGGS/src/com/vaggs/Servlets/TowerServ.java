@@ -28,7 +28,7 @@ public class TowerServ extends HttpServlet {
 			resp.sendRedirect(userService.createLogoutURL(req.getRequestURI()));
 			return;
 		}
-			
+		
 		if(user != null && AtcUser.GetUser(user.getNickname()) != null) {
 			req.getRequestDispatcher("/atc.jsp").forward(req, resp);
 		} else {
