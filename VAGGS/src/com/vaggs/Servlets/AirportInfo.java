@@ -84,8 +84,10 @@ public class AirportInfo extends HttpServlet {
 			writer.value(w.getPoint().getLat());
 			writer.key("Lng");
 			writer.value(w.getPoint().getLng());
-			writer.key("isHoldshort");
+			writer.key("Holdshort");
 			writer.value(w.isHoldShort());
+			writer.key("Intersection");
+			writer.value(w.isIntersection());
 		writer.endObject();
 	}
 }
