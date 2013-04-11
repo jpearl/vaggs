@@ -149,10 +149,12 @@
       
       function findTaxiway(pt1, pt2) {
         var ans = null;
-        taxiways.forEach(function(taxi) {
-          if(containsPt(taxiway, pt1) && containsPt(taxiway, pt2))
-            ans = taxi;
-        });
+        if(pt1 != null && pt2 != null) {
+          taxiways.forEach(function(taxi) {
+            if(containsPt(taxi, pt1) && containsPt(taxi, pt2))
+              ans = taxi;
+          });
+        }
         return ans;
       }
       
@@ -208,10 +210,12 @@
                     var linePts = polyLine.getPath();
                     lastWaypt = route.pop();
                     if(lastWaypt != null) {
+                      console.log("  (" + lastWaypt.Lat + ", " + lastWaypt.Lng + ")");
                       latlng = linePts.pop();
-                      while(latlng.Lng != lastWaypt.Lng || latlng.Lat != lastWaypt.Lat)
+                      while(latlng != null && (latlng.lng() != lastWaypt.Lng || latlng.lat() != lastWaypt.Lat)) {
                         latlng = linePts.pop();
-                      linePts.push(latlng);
+                        console.log("  " + latlng);
+                      }
                       route.push(lastWaypt);
                     } else {
                       route = [];
@@ -221,7 +225,7 @@
                 
                   var ans = [];
                   for( j = 0; j < taxiways.length; j++) {
-                    if(containsPt(taxiways[j], pt) && i != j)
+                    if(containsPt(taxiways[j], wayPt) && i != j)
                       ans.push(j);
                   }
                   console.log(ans);
@@ -229,7 +233,7 @@
                 });
               });
             }
-          }
+          });
         }
       }
             
