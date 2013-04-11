@@ -2,9 +2,7 @@ package com.vaggs.Servlets;
 
 import static com.vaggs.Utils.OfyService.ofy;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,10 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Route.Transponder;
-import com.vaggs.Utils.AtcUser;
+import com.vaggs.Utils.Constants;
 import com.vaggs.Utils.Constants.CHANNEL_MODE;
 
 @SuppressWarnings("serial")
@@ -47,23 +47,18 @@ public class ChannelRegistration extends HttpServlet {
 					return;
 				}
 				clientId = transponderQuery;
+				ChannelService service = ChannelServiceFactory.getChannelService();
+				
 				
 				break;
 			case TOWER:
-				String towerUser = req.getParameter("user");
-				if(towerUser == null || towerUser.isEmpty()) {
-					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		            writeError(writer, "Must query for valid ATC User");
-					return;
-				}
-				
-				AtcUser user = AtcUser.GetUser(towerUser);
+				User user = UserServiceFactory.getUserService().getCurrentUser();
 				if(user == null) {
 					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		            writeError(writer, "Must query for valid ATC User");
+		            writeError(writer, "Must be logged in to " + Constants.PROJECT_ACRONYM);
 		            return;
 				} else {
-					clientId = towerUser;
+					clientId = user.getNickname();
 				}
 				
 				break;
