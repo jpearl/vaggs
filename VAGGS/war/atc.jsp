@@ -38,7 +38,7 @@
         $.getJSON("airportinfo?airport=" + airportID, function(taxis) {
           console.log("Queried API and got taxiway info");
           taxiways = taxis;
-          displayTaxiway(0);
+          displayTaxiways([0]);
         }).error(function() {
           console.log("Failed to get taxiway info from server for " + airportID);
         });
@@ -127,7 +127,7 @@
                 console.log("Sent route!");
                 route = [];
                 polyLine.getPath().clear(); 
-                displayTaxiway(0);
+                displayTaxiways([0]);
               },
             statusCode: {
                 403: function() {
@@ -141,48 +141,94 @@
       function containsPt(taxiway, pt) {
         var ans = false;
         taxiway.forEach(function (waypt) {
-          if(comparePt(pt, waypt))
+          if(wayPtEq(pt, waypt))
             ans = true;
         });
         return ans;
       }
       
-      function comparePt(ptA, ptB) {
+      function findTaxiway(pt1, pt2) {
+        var ans = null;
+        taxiways.forEach(function(taxi) {
+          if(containsPt(taxiway, pt1) && containsPt(taxiway, pt2))
+            ans = taxi;
+        });
+        return ans;
+      }
+      
+      function wayPtEq(ptA, ptB) {
         return ptA.Lat == ptB.Lat && ptA.Lng == ptB.Lng && ptA.isHoldshort == ptB.isHoldshort;
       }
       
-      function displayTaxiway (i) {
+      function addToPolyLine(taxi, lastWaypt, wayPt) {      
+        if(taxi != null && lastWaypt != null && wayPt != null) {
+          var found = false;
+          var linePts = polyLine.getPath();
+          for(i = 0; i < taxi.length; i++) {
+            if(wayPtEq(lastWaypt, taxi[i])) {
+              found = true;
+              linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+            } else if (wayPtEq(wayPt, taxi[i])) {
+              if(found) {
+                found = false;
+                linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+              } else {
+                addToPolyLine(taxi.reverse(), lastWaypt, wayPt);
+                return;
+              }
+            } else if (found) {
+              linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+            }
+          }
+        }
+      }
+      
+      function displayTaxiways (indicies) {
         if(taxiways != null) {
           markers.forEach(function (marker) {
             marker.setMap(null);
           });
           markers = [];
           
-          if(i >= 0 && i < taxiways.length) {
-            taxiways[i].forEach(function (pt) {
-              var latlng = LatLng(pt.Lat, pt.Lng);
-              var marker = new google.maps.Marker({ position: latlng, map: map });
-              markers.push(marker);
-              google.maps.event.addListener(marker, 'click', function() {           
-                var linePts = polyLine.getPath();
-                var lastPt = linePts.pop();
-                if(lastPt == null || !lastPt.equals(latlng)) {
-                  if(lastPt != null) 
-                    linePts.push(lastPt);
-                  linePts.push(latlng);
-                  route.push(pt);
-                } else
-                  route.pop();
-              
-                var ans = -1;
-                for( j = 0; j < taxiways.length; j++) {
-                  if(containsPt(taxiways[j], pt) && i != j)
-                    ans = j;
-                }
-                console.log(ans);
-                displayTaxiway(ans);
+          indicies.forEach(function (i) { 
+            if(i >= 0 && i < taxiways.length) {
+              taxiways[i].forEach(function (wayPt) {
+                var latlng = LatLng(wayPt.Lat, wayPt.Lng);
+                var marker = new google.maps.Marker({ position: latlng, map: map });
+                markers.push(marker);
+                google.maps.event.addListener(marker, 'click', function() {           
+                  var lastWaypt = route.pop();
+                  if(lastWaypt == null || !wayPtEq(lastWaypt, wayPt)) {
+                    if(lastWaypt != null) 
+                      route.push(lastWaypt);
+                    route.push(wayPt);
+                    var taxi = findTaxiway(lastWaypt, wayPt);
+                    addToPolyLine(taxi, lastWaypt, wayPt);
+                  } else {
+                    var linePts = polyLine.getPath();
+                    lastWaypt = route.pop();
+                    if(lastWaypt != null) {
+                      latlng = linePts.pop();
+                      while(latlng.Lng != lastWaypt.Lng || latlng.Lat != lastWaypt.Lat)
+                        latlng = linePts.pop();
+                      linePts.push(latlng);
+                      route.push(lastWaypt);
+                    } else {
+                      route = [];
+                      linePts.clear();
+                    }
+                  }
+                
+                  var ans = [];
+                  for( j = 0; j < taxiways.length; j++) {
+                    if(containsPt(taxiways[j], pt) && i != j)
+                      ans.push(j);
+                  }
+                  console.log(ans);
+                  displayTaxiways(ans);
+                });
               });
-            });
+            }
           }
         }
       }
