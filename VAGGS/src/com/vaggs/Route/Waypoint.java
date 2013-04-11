@@ -44,9 +44,11 @@ public class Waypoint {
 		return intersection;
 	}
 	
+	public void setIntersection(boolean value) {
+		intersection = value;
+	}
+	
 	public boolean equals(Waypoint p) {
-		return this.holdShort == p.holdShort &&
-				this.intersection == p.intersection &&
-				this.point.equals(p.point);
+		return this.point.equals(p.point);
 	}
 }

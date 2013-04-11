@@ -198,8 +198,9 @@
               taxiways[i].forEach(function (wayPt) {
                 if(wayPt.Intersection || wayPt.Holdshort) {
                   var latlng = LatLng(wayPt.Lat, wayPt.Lng);
-                  var marker;
+                  var marker = null;
                   if(wayPt.Holdshort) {
+                    /*
                     marker = new google.maps.Marker({
                       icon: {
                           path: 'M -5,0 0,-5 5,0 0,5 z',
@@ -207,10 +208,11 @@
                           fillColor: '#F00',
                           fillOpacity: 1,
                       },
-                      position: LatLng(pt.Lat, pt.Lng),
+                      position: LatLng(wayPt.Lat, wayPt.Lng),
                       map: map,
                       clickable: false,
                     });
+                    */
                   } else {
                     marker = new google.maps.Marker({ position: latlng, map: map });
                     google.maps.event.addListener(marker, 'click', function() {           
@@ -246,8 +248,9 @@
                       console.log(ans);
                       displayTaxiways(ans);
                     });
-                  markers.push(marker);
                   }
+                  if(marker != null)
+                    markers.push(marker);
                 }
               });
             }

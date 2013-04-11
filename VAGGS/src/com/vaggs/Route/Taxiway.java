@@ -43,7 +43,9 @@ public class Taxiway {
 	}
 	
 	public boolean contains(Waypoint pt) {
-		return pts.contains(pt);
+		for(Waypoint p : pts)
+			if(p.equals(pt)) return true;
+		return false;
 	}
 	
 	public ArrayList<Waypoint> PtsBetween(Waypoint start, Waypoint end) {

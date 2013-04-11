@@ -69,10 +69,22 @@ public class Airport {
 	}
 	
 	public void setTaxiways(List<Taxiway> taxis) {
-		taxiways.clear();
-		for(Taxiway taxi : taxis) {
-			taxiways.add(Ref.create(ofy().save().entity(taxi).now()));
+		for(Taxiway taxi1 : taxis) {
+			for(Waypoint pt : taxi1.getWaypoints()) {
+				boolean isIntersection = false;
+				for(Taxiway taxi2 : taxis) {
+					if(taxi1 != taxi2 && taxi2.contains(pt)) {
+						isIntersection = true;
+						break;
+					}
+				}
+				pt.setIntersection(isIntersection);
+			}
 		}
+		
+		taxiways.clear();
+		for(Taxiway taxi : taxis)
+			taxiways.add(Ref.create(ofy().save().entity(taxi).now()));
 	}
 
 	/**
@@ -83,6 +95,8 @@ public class Airport {
 	}
 	
 	public void setRouteStartingPoints(List<Waypoint> pts) {
+		for(Waypoint pt : pts)
+			pt.setIntersection(true);
 		routeStartingPoints = pts;
 	}
 }
