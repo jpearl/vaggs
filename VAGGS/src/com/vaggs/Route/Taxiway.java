@@ -16,15 +16,15 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 @Embed
 public class Taxiway {
-	@Id long name;
+	@Id String name;
 	private List<Waypoint> pts;
 	
 	private Taxiway() {
 		this.pts = Lists.newArrayList();
-		this.name = -1;
+		this.name = "";
 	}
 	
-	public Taxiway(char name) {
+	public Taxiway(String name) {
 		this.pts = Lists.newArrayList();
 		this.name = name;
 	}

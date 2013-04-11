@@ -27,7 +27,7 @@ public class DebuggingDBObjects {
 		//Transponder.Parse(2).setRoute(debugRoute);
 		
 		ArrayList<Taxiway> taxiways = Lists.newArrayList();
-		Taxiway taxiway = new Taxiway('B'); 
+		Taxiway taxiway = new Taxiway("B"); 
 		 taxiway.setWaypoints(Arrays.asList(
 			new Waypoint(new LatLng(41.73228367493647, -71.42739772796631), false, true),
 			new Waypoint(new LatLng(41.72972153234874, -71.42662525177002), false, true),
@@ -40,7 +40,7 @@ public class DebuggingDBObjects {
 			));
 		taxiways.add(taxiway);
 		
-		taxiway = new Taxiway('A'); 
+		taxiway = new Taxiway("A"); 
 		 taxiway.setWaypoints(Arrays.asList( 
 		new Waypoint(new LatLng(41.732027465276374, -71.42314910888672), false, false),
 		new Waypoint(new LatLng(41.7312588301645, -71.42203330993652), false, true),
@@ -48,7 +48,7 @@ public class DebuggingDBObjects {
 			));
 		taxiways.add(taxiway);
 		
-		taxiway = new Taxiway('C'); 
+		taxiway = new Taxiway("C"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		 new Waypoint(new LatLng(41.72575000938133, -71.4336633682251), false, false),
 		new Waypoint(new LatLng(41.72575000938133, -71.43280506134033), false, false), 
@@ -63,7 +63,7 @@ public class DebuggingDBObjects {
 		taxiways.add(taxiway);
 		
 		
-		taxiway = new Taxiway('E'); 
+		taxiway = new Taxiway("E"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.719536005117995, -71.43555164337158), false, true),
 		new Waypoint(new LatLng(41.71610843636524, -71.43426418304443), false, true)
@@ -72,7 +72,7 @@ public class DebuggingDBObjects {
 		
 		
 
-		taxiway = new Taxiway('F'); 
+		taxiway = new Taxiway("F"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.72869664669985, -71.43306255340576), false, true),
 		new Waypoint(new LatLng(41.73151504289037, -71.43237590789795), false, true)
@@ -80,7 +80,7 @@ public class DebuggingDBObjects {
 		 taxiways.add(taxiway);
 		 
 		 
-		 taxiway = new Taxiway('M'); 
+		 taxiway = new Taxiway("M"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.7312588301645, -71.42203330993652), false, true),
 		new Waypoint(new LatLng(41.729849641905204, -71.42327785491943), false, true),
@@ -91,7 +91,7 @@ public class DebuggingDBObjects {
 		 taxiways.add(taxiway);
 		 
 		 
-		 taxiway = new Taxiway('N'); 
+		 taxiway = new Taxiway("N"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.72808811310961, -71.43435001373291), false, false),
 		new Waypoint(new LatLng(41.72869664669985, -71.43306255340576), false, false),
@@ -105,7 +105,7 @@ public class DebuggingDBObjects {
 		 taxiways.add(taxiway);
 		
 		 
-		 taxiway = new Taxiway('S'); 
+		 taxiway = new Taxiway("S"); 
 		 taxiway.setWaypoints(Arrays.asList( 
 		new Waypoint(new LatLng(41.71796639351807, -71.4325475692749), false, true), 
 		new Waypoint(new LatLng(41.71610843636524, -71.43426418304443), false, true), 
@@ -114,7 +114,7 @@ public class DebuggingDBObjects {
 		));
 		 taxiways.add(taxiway);
 		 
-		 taxiway = new Taxiway('T'); 
+		 taxiway = new Taxiway("T"); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.72965747747473, -71.43061637878418), false, false),
 		new Waypoint(new LatLng(41.72575000938133, -71.4336633682251), false, false),
@@ -126,7 +126,7 @@ public class DebuggingDBObjects {
 		));
 		 taxiways.add(taxiway);
 		 
-		 taxiway = new Taxiway('V'); 
+		 taxiway = new Taxiway("V"); 
 		 taxiway.setWaypoints(Arrays.asList( 
 		new Waypoint(new LatLng(41.73228367493647, -71.42739772796631), false, true),
 		new Waypoint(new LatLng(41.72972153234874, -71.4296293258667), true, true), 
@@ -135,7 +135,50 @@ public class DebuggingDBObjects {
 		));
 		 taxiways.add(taxiway);
 		 
-		
+		 taxiway = new Taxiway("5-S");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.713769896707845, -71.43443584442139), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("5-T");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.71754995951615, -71.43151760101318), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("5-C");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.72453288061494, -71.42598152160645), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("5-B");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.726678855296136, -71.42430782318115), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("5-N");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.72988166925439, -71.42160415649414), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("5-A");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.73074640164693, -71.42087459564209), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("16-F");
+		 //no idea where this point is
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("16-N");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.72972153234874, -71.4296293258667), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("16-M");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.72626247775354, -71.42602443695068), true, true)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("16-B");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.72321963687659, -71.42310619354248), true, false)));
+		 taxiways.add(taxiway);
+		 
+		 taxiway = new Taxiway("16-C");
+		 taxiway.setWaypoints(Arrays.asList(new Waypoint(new LatLng(41.718414857887055, -71.41825675964355), true, true)));
+		 taxiways.add(taxiway);
+		 
 		Airport kpvd = new Airport("kpvd", null, null, null, "");
 		kpvd.setTaxiways(taxiways);
 		kpvd.setRouteStartingPoints(Arrays.asList(new Waypoint(new LatLng(41.72575000938133, -71.4336633682251), false, true)));
