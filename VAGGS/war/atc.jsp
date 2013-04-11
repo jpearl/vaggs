@@ -159,7 +159,8 @@
       }
       
       function wayPtEq(ptA, ptB) {
-        return ptA.Lat == ptB.Lat && ptA.Lng == ptB.Lng && ptA.isHoldshort == ptB.isHoldshort;
+        return ptA.Lat == ptB.Lat && ptA.Lng == ptB.Lng
+          && ptA.Holdshort == ptB.Holdshort && ptA.Intersection == ptB.Intersection;
       }
       
       function addToPolyLine(taxi, lastWaypt, wayPt) {      
@@ -195,42 +196,59 @@
           indicies.forEach(function (i) { 
             if(i >= 0 && i < taxiways.length) {
               taxiways[i].forEach(function (wayPt) {
-                var latlng = LatLng(wayPt.Lat, wayPt.Lng);
-                var marker = new google.maps.Marker({ position: latlng, map: map });
-                markers.push(marker);
-                google.maps.event.addListener(marker, 'click', function() {           
-                  var lastWaypt = route.pop();
-                  if(lastWaypt == null || !wayPtEq(lastWaypt, wayPt)) {
-                    if(lastWaypt != null) 
-                      route.push(lastWaypt);
-                    route.push(wayPt);
-                    var taxi = findTaxiway(lastWaypt, wayPt);
-                    addToPolyLine(taxi, lastWaypt, wayPt);
+                if(wayPt.Intersection || wayPt.Holdshort) {
+                  var latlng = LatLng(wayPt.Lat, wayPt.Lng);
+                  var marker;
+                  if(wayPt.Holdshort) {
+                    marker = new google.maps.Marker({
+                      icon: {
+                          path: 'M -5,0 0,-5 5,0 0,5 z',
+                          strokeColor: '#F00',
+                          fillColor: '#F00',
+                          fillOpacity: 1,
+                      },
+                      position: LatLng(pt.Lat, pt.Lng),
+                      map: map,
+                      clickable: false,
+                    });
                   } else {
-                    var linePts = polyLine.getPath();
-                    lastWaypt = route.pop();
-                    if(lastWaypt != null) {
-                      console.log("  (" + lastWaypt.Lat + ", " + lastWaypt.Lng + ")");
-                      latlng = linePts.pop();
-                      while(latlng != null && (latlng.lng() != lastWaypt.Lng || latlng.lat() != lastWaypt.Lat)) {
-                        latlng = linePts.pop();
-                        console.log("  " + latlng);
+                    marker = new google.maps.Marker({ position: latlng, map: map });
+                    google.maps.event.addListener(marker, 'click', function() {           
+                      var lastWaypt = route.pop();
+                      if(lastWaypt == null || !wayPtEq(lastWaypt, wayPt)) {
+                        if(lastWaypt != null) 
+                          route.push(lastWaypt);
+                        route.push(wayPt);
+                        var taxi = findTaxiway(lastWaypt, wayPt);
+                        addToPolyLine(taxi, lastWaypt, wayPt);
+                      } else {
+                        var linePts = polyLine.getPath();
+                        lastWaypt = route.pop();
+                        if(lastWaypt != null) {
+                          console.log("  (" + lastWaypt.Lat + ", " + lastWaypt.Lng + ")");
+                          latlng = linePts.pop();
+                          while(latlng != null && (latlng.lng() != lastWaypt.Lng || latlng.lat() != lastWaypt.Lat)) {
+                            latlng = linePts.pop();
+                            console.log("  " + latlng);
+                          }
+                          route.push(lastWaypt);
+                        } else {
+                          route = [];
+                          linePts.clear();
+                        }
                       }
-                      route.push(lastWaypt);
-                    } else {
-                      route = [];
-                      linePts.clear();
-                    }
+                  
+                      var ans = [];
+                      for( j = 0; j < taxiways.length; j++) {
+                        if(containsPt(taxiways[j], wayPt) && i != j)
+                          ans.push(j);
+                      }
+                      console.log(ans);
+                      displayTaxiways(ans);
+                    });
+                  markers.push(marker);
                   }
-                
-                  var ans = [];
-                  for( j = 0; j < taxiways.length; j++) {
-                    if(containsPt(taxiways[j], wayPt) && i != j)
-                      ans.push(j);
-                  }
-                  console.log(ans);
-                  displayTaxiways(ans);
-                });
+                }
               });
             }
           });
