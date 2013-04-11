@@ -23,8 +23,8 @@ public class DebuggingDBObjects {
 				new Waypoint(new LatLng(41.73783, -71.41615), false, false),
 				new Waypoint(new LatLng(41.725, -71.433333), true, false)
 			));
-		Transponder.Parse(1).setRoute(debugRoute);
-		Transponder.Parse(2).setRoute(debugRoute);
+		//Transponder.Parse(1).setRoute(debugRoute);
+		//Transponder.Parse(2).setRoute(debugRoute);
 		
 		ArrayList<Taxiway> taxiways = Lists.newArrayList();
 		Taxiway taxiway = new Taxiway('B'); 

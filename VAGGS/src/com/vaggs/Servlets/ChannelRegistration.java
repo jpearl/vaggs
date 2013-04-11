@@ -9,12 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
+import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.Transponder;
 import com.vaggs.Utils.Constants;
 import com.vaggs.Utils.Constants.CHANNEL_MODE;
@@ -28,6 +30,8 @@ public class ChannelRegistration extends HttpServlet {
 		
 		JSONWriter writer = new JSONWriter(resp.getWriter());
 		
+		Airport pvd = ofy().load().type(Airport.class).id("kpvd").get();
+		
 		CHANNEL_MODE mode = CHANNEL_MODE.getMode(req.getParameter("mode"));
 		if(mode != null) {
 			String clientId = "";
@@ -39,26 +43,32 @@ public class ChannelRegistration extends HttpServlet {
 					writeError(writer, "Invalid request. Must query for a valid transponder");
 					return;
 				}
-				Long transponderQueryLong = Long.parseLong(req.getParameter("transponder"));
-				Transponder transponder = ofy().load().type(Transponder.class).id(transponderQueryLong).get();
+				
+				Transponder transponder = Transponder.Parse(Long.parseLong(req.getParameter("transponder")));
 				if(transponder == null) {
-					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		            writeError(writer, "No transponder code: " + transponderQueryLong);
+					resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Transponder Code out of range");
 					return;
 				}
+				
 				clientId = transponderQuery;
 				ChannelService service = ChannelServiceFactory.getChannelService();
-				
+				for(String user : pvd.getConnectedUsers()) {
+					service.sendMessage(new ChannelMessage(user, "{\"transponder\": " + transponderQuery + "}"));
+				}
 				
 				break;
 			case TOWER:
 				User user = UserServiceFactory.getUserService().getCurrentUser();
 				if(user == null) {
 					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		            writeError(writer, "Must be logged in to " + Constants.PROJECT_ACRONYM);
+		            writeError(writer, "Must	 be logged in to " + Constants.PROJECT_ACRONYM);
 		            return;
 				} else {
 					clientId = user.getNickname();
+					Airport airport = ofy().load().type(Airport.class).id("kpvd").get();
+					airport.addConnectedUser(user.getNickname());
+					ofy().save().entity(airport).now();
+					System.out.println("adding user " + user.getNickname());
 				}
 				
 				break;

@@ -56,7 +56,7 @@ public class Route implements Iterable<Waypoint>{
 		for(int i=0; i<numWaypoints; i++) {
 			JSONObject point = obj.getJSONObject(i);
 			LatLng loc = new LatLng(point.getDouble("Lat"), point.getDouble("Lng"));
-			Waypoint p = new Waypoint(loc, point.getBoolean("isHoldshort"), false);
+			Waypoint p = new Waypoint(loc, point.getBoolean("Holdshort"), false);
 			waypoints.add(p);
 		}
 		route.addWaypoints(waypoints);

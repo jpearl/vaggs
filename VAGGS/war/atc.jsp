@@ -25,6 +25,7 @@
       var markers = [];
       var polyLine = null;
       var route = [];
+      var routeRequests = [];
       
       PVDOverlay.prototype = new google.maps.OverlayView();
 
@@ -35,6 +36,15 @@
       function initialize() {
         $.ajax({cache:false});
         
+		//register and set up the channel
+        $.getJSON("channelregistration?mode=tower", function(tokenResp) {
+            token = tokenResp.token;
+            channel = new goog.appengine.Channel(token);
+            socket = channel.open();
+            socket.onmessage = onChannelMessage;
+            socket.onopen = onOpen;
+         });
+		
         $.getJSON("airportinfo?airport=" + airportID, function(taxis) {
           console.log("Queried API and got taxiway info");
           taxiways = taxis;
@@ -59,6 +69,25 @@
         var srcImage = 'airports/pvd2.png';
         overlay = new PVDOverlay(new google.maps.LatLngBounds(LatLng(41.7087976, -71.44134), LatLng(41.73783, -71.41615)), srcImage, map);
         
+		/** Google Channel Functions **/
+        onChannelMessage = function(message) {
+          console.log("Got route request message");
+          processMessage(message);
+        }
+        
+        onOpen = function() {
+            console.log("Channel opened to server");
+        }
+        
+        
+        /** ============ **/
+        
+        function processMessage(message) {
+            transponder = $.parseJSON(message.data).transponder;
+            routeRequests.push(transponder);
+            console.log('Transponder: ' + transponder + ' connected');
+        }
+		
         taxiRouteOptions = {
           strokeColor: "#00FF00",
           strokeOpacity: 1.0,

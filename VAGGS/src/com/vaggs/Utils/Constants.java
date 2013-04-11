@@ -6,6 +6,7 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 
 public class Constants {
 
+	public static String PROJECT_ACRONYM = "TRFS";
 	public static String MAPS_API_KEY = "AIzaSyAK0HG-UZtFAiPtHkyc6xjxI2wQXCOX4Pk";
 	
 	public enum CHANNEL_MODE {

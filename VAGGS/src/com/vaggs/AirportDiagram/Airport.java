@@ -1,8 +1,12 @@
 package com.vaggs.AirportDiagram;
 
+import static com.vaggs.Utils.OfyService.ofy;
+
 import java.util.List;
+import java.util.Set;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -10,8 +14,6 @@ import com.googlecode.objectify.annotation.Load;
 import com.vaggs.Route.Taxiway;
 import com.vaggs.Route.Waypoint;
 import com.vaggs.Utils.LatLng;
-
-import static com.vaggs.Utils.OfyService.ofy;
 
 /**
  * An Airport Diagram Information
@@ -27,6 +29,7 @@ public class Airport {
 	private String diagramImage;
 	@Load private List<Ref<Taxiway>> taxiways = Lists.newArrayList();
 	private List<Waypoint> routeStartingPoints;
+	private Set<String> connectedUsers = Sets.newHashSet();
 
 	@SuppressWarnings("unused")
     private Airport() {
@@ -39,6 +42,18 @@ public class Airport {
 		swBound = sw;
 		neBound = ne;
 		diagramImage = image;
+	}
+	
+	public void addConnectedUser(String user) {
+		connectedUsers.add(user);
+	}
+	
+	public void removeConnectedUser(String user) {
+		connectedUsers.remove(user);
+	}
+	
+	public List<String> getConnectedUsers() {
+		return Lists.newArrayList(connectedUsers);
 	}
 	
 	public LatLng getCenter() {

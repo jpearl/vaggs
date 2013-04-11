@@ -20,6 +20,10 @@
         <servlet-class>com.vaggs.Servlets.ChannelRegistration</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ChannelConnection</servlet-name>
+        <servlet-class>com.vaggs.Servlets.ChannelConnection</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>AirportInfo</servlet-name>
         <servlet-class>com.vaggs.Servlets.AirportInfo</servlet-class>
     </servlet>
@@ -42,6 +46,14 @@
     <servlet-mapping>
         <servlet-name>ChannelRegistration</servlet-name>
         <url-pattern>/channelregistration</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChannelConnection</servlet-name>
+        <url-pattern>/_ah/channel/connected/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChannelConnection</servlet-name>
+        <url-pattern>/_ah/channel/disconnected/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AirportInfo</servlet-name>

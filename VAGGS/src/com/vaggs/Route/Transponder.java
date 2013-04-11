@@ -50,7 +50,7 @@ public class Transponder {
 	 * @return true if the argument is between the octal numbers 0000 and 7777
 	 */
 	static boolean CheckTransponderCode(long code) {
-		for(int i = 0; i < 3; i++) {
+		for(int i = 0; i < 4; i++) {
 			if(code % 10 > 7) return false;
 			code /= 10;
 		}
