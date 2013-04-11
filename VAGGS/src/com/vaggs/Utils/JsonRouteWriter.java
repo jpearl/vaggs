@@ -37,6 +37,8 @@ public class JsonRouteWriter {
 		writer.value(pt.getPoint().getLng());
 		writer.key("Holdshort");
 		writer.value(pt.isHoldShort());
+		writer.key("Intersection");
+		writer.value(pt.isIntersection());
 		writer.endObject();
 	}
 
