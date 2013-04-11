@@ -94,9 +94,9 @@ public class DebuggingDBObjects {
 		 taxiway = new Taxiway('N'); 
 		 taxiway.setWaypoints(Arrays.asList(
 		new Waypoint(new LatLng(41.72808811310961, -71.43435001373291), false, false),
-		new Waypoint(new LatLng(41.72965747747473, -71.43061637878418), false, true),
 		new Waypoint(new LatLng(41.72869664669985, -71.43306255340576), false, false),
 		new Waypoint(new LatLng(41.729561395043916, -71.43237590789795), false, true),
+		new Waypoint(new LatLng(41.72965747747473, -71.43061637878418), false, true),
 		new Waypoint(new LatLng(41.72972153234874, -71.4296293258667), true, false), 
 		new Waypoint(new LatLng(41.72972153234874, -71.42662525177002), false, true), 
 		new Waypoint(new LatLng(41.729849641905204, -71.42327785491943), false, true),

@@ -233,7 +233,7 @@
                 if(wayPt.Intersection || wayPt.Holdshort) {
                   var latlng = LatLng(wayPt.Lat, wayPt.Lng);
                   var marker = null;
-                  if(wayPt.Holdshort) {
+                  if(wayPt.Holdshort && !wayPt.Intersection) {
                     /*
                     marker = new google.maps.Marker({
                       icon: {
@@ -261,13 +261,11 @@
                         var linePts = polyLine.getPath();
                         lastWaypt = routeIntersections.pop();
                         if(lastWaypt != null) {
-                          console.log("  (" + lastWaypt.Lat + ", " + lastWaypt.Lng + ")");
                           latlng = linePts.pop();
                           routeWaypts.pop();
                           while(latlng != null && (latlng.lng() != lastWaypt.Lng || latlng.lat() != lastWaypt.Lat)) {
                             latlng = linePts.pop();
                             routeWaypts.pop();
-                            console.log("  " + latlng);
                           }
                           routeIntersections.push(lastWaypt);
                         } else {
