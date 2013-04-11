@@ -138,7 +138,7 @@ public class DebuggingDBObjects {
 		
 		Airport kpvd = new Airport("kpvd", null, null, null, "");
 		kpvd.setTaxiways(taxiways);
-		kpvd.setRouteStartingPoints(Arrays.asList(new Waypoint(new LatLng(41.72575000938133, -71.4336633682251), false, false)));
+		kpvd.setRouteStartingPoints(Arrays.asList(new Waypoint(new LatLng(41.72575000938133, -71.4336633682251), false, true)));
 		
 		ofy().save().entities(kpvd).now();
 		
