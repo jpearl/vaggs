@@ -143,8 +143,8 @@ public class DebuggingDBObjects {
 		ofy().save().entities(kpvd).now();
 		
 		AtcUser josh = new AtcUser("josh@joshpearl.com");
-		AtcUser hawk = new AtcUser("dazerdude@gmail.com");
-		AtcUser max = new AtcUser("maxbulian@gmail.com");
+		AtcUser hawk = new AtcUser("dazerdude");
+		AtcUser max = new AtcUser("maxbulian");
 		
 		ofy().save().entity(josh).now();
 		ofy().save().entity(hawk).now();
