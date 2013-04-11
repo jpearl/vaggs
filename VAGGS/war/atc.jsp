@@ -24,7 +24,8 @@
       var currTaxiway = 0;
       var markers = [];
       var polyLine = null;
-      var route = [];
+      var routeWaypts = [];
+      var routeIntersections = [];
       var routeRequests = [];
       
       PVDOverlay.prototype = new google.maps.OverlayView();
@@ -151,10 +152,11 @@
           $.ajax({
             type: "POST",
             url: '/postroute',
-            data: JSON.stringify({ "transponder" : tCode, "route" : route }),
+            data: JSON.stringify({ "transponder" : tCode, "route" : routeWaypts }),
             success: function() {
                 console.log("Sent route!");
-                route = [];
+                routeWaypts = [];
+                routeIntersections = [];
                 polyLine.getPath().clear(); 
                 displayTaxiways([0]);
               },
@@ -192,7 +194,7 @@
           && ptA.Holdshort == ptB.Holdshort && ptA.Intersection == ptB.Intersection;
       }
       
-      function addToPolyLine(taxi, lastWaypt, wayPt) {      
+      function addToRoute(taxi, lastWaypt, wayPt) {      
         if(taxi != null && lastWaypt != null && wayPt != null) {
           var found = false;
           var linePts = polyLine.getPath();
@@ -200,16 +202,19 @@
             if(wayPtEq(lastWaypt, taxi[i])) {
               found = true;
               linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+              routeWaypts.push(taxi[i]);
             } else if (wayPtEq(wayPt, taxi[i])) {
               if(found) {
                 found = false;
                 linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+                routeWaypts.push(taxi[i]);
               } else {
                 addToPolyLine(taxi.reverse(), lastWaypt, wayPt);
                 return;
               }
             } else if (found) {
               linePts.push(LatLng(taxi[i].Lat, taxi[i].Lng));
+              routeWaypts.push(taxi[i]);
             }
           }
         }
@@ -248,23 +253,26 @@
                       var lastWaypt = route.pop();
                       if(lastWaypt == null || !wayPtEq(lastWaypt, wayPt)) {
                         if(lastWaypt != null) 
-                          route.push(lastWaypt);
-                        route.push(wayPt);
+                          routeIntersections.push(lastWaypt);
+                        routeIntersections.push(wayPt);
                         var taxi = findTaxiway(lastWaypt, wayPt);
                         addToPolyLine(taxi, lastWaypt, wayPt);
                       } else {
                         var linePts = polyLine.getPath();
-                        lastWaypt = route.pop();
+                        lastWaypt = routeIntersections.pop();
                         if(lastWaypt != null) {
                           console.log("  (" + lastWaypt.Lat + ", " + lastWaypt.Lng + ")");
                           latlng = linePts.pop();
+                          routeWaypts.pop();
                           while(latlng != null && (latlng.lng() != lastWaypt.Lng || latlng.lat() != lastWaypt.Lat)) {
                             latlng = linePts.pop();
+                            routeWaypts.pop();
                             console.log("  " + latlng);
                           }
-                          route.push(lastWaypt);
+                          routeIntersections.push(lastWaypt);
                         } else {
-                          route = [];
+                          routeIntersections = [];
+                          routeWaypts = [];
                           linePts.clear();
                         }
                       }
