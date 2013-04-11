@@ -100,7 +100,7 @@
         TransponderCall();
         
         //register and set up the channel
-        $.getJSON("channelregistration?transponder=" + transponder, function(tokenResp) {
+        $.getJSON("channelregistration?mode=cockpit&transponder=" + transponder, function(tokenResp) {
             token = tokenResp.token;
             channel = new goog.appengine.Channel(token);
             socket = channel.open();

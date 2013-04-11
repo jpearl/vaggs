@@ -16,9 +16,11 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Route.Transponder;
+import com.vaggs.Utils.AtcUser;
+import com.vaggs.Utils.Constants.CHANNEL_MODE;
 
 @SuppressWarnings("serial")
-public class ChannelRegistration extends HttpServlet {
+public class ChannelRegistration extends HttpServlet {	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
 		resp.setContentType("application/json");
@@ -26,29 +28,59 @@ public class ChannelRegistration extends HttpServlet {
 		
 		JSONWriter writer = new JSONWriter(resp.getWriter());
 		
-		String query = req.getParameter("transponder");
-		if(null == query) {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			writeError(writer, "Invalid request. Must query for a valid transponder");
-			return;
-		}
-		Long transponderQuery = Long.parseLong(req.getParameter("transponder"));
-		Transponder transponder = ofy().load().type(Transponder.class).id(transponderQuery).get();
-		if(transponder == null) {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writeError(writer, "No transponder code: " + transponderQuery);
-			return;
+		CHANNEL_MODE mode = CHANNEL_MODE.getMode(req.getParameter("mode"));
+		if(mode != null) {
+			String clientId = "";
+			switch (mode) {
+			case COCKPIT:
+				String transponderQuery = req.getParameter("transponder");
+				if(null == transponderQuery) {
+					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					writeError(writer, "Invalid request. Must query for a valid transponder");
+					return;
+				}
+				Long transponderQueryLong = Long.parseLong(req.getParameter("transponder"));
+				Transponder transponder = ofy().load().type(Transponder.class).id(transponderQueryLong).get();
+				if(transponder == null) {
+					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		            writeError(writer, "No transponder code: " + transponderQueryLong);
+					return;
+				}
+				clientId = transponderQuery;
+				
+				break;
+			case TOWER:
+				String towerUser = req.getParameter("user");
+				if(towerUser == null || towerUser.isEmpty()) {
+					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		            writeError(writer, "Must query for valid ATC User");
+					return;
+				}
+				
+				AtcUser user = AtcUser.GetUser(towerUser);
+				if(user == null) {
+					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		            writeError(writer, "Must query for valid ATC User");
+		            return;
+				} else {
+					clientId = towerUser;
+				}
+				
+				break;
+			}
+			ChannelService channelService = ChannelServiceFactory.getChannelService();
+			String token = channelService.createChannel(clientId);
+			
+			try {
+				writer.object();
+					writer.key("token");
+				    writer.value(token);
+				writer.endObject();
+			} catch (JSONException e) { e.printStackTrace(); }
+		} else {
+			System.out.println("mode was null");
 		}
 		
-		ChannelService channelService = ChannelServiceFactory.getChannelService();
-		String token = channelService.createChannel(String.valueOf(transponder.getTransponderCode()));
-		
-		try {
-			writer.object();
-				writer.key("token");
-			    writer.value(token);
-			writer.endObject();
-		} catch (JSONException e) { e.printStackTrace(); }
 	}
 	
 	void writeError(JSONWriter writer, String error) {
