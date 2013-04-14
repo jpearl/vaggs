@@ -26,9 +26,15 @@ import com.vaggs.Utils.LatLng;
 public class Route implements Iterable<Waypoint>{
 	@Id Long id; 
 	private List<Waypoint> route = null;
+	String name;
 	
 	private Route() {
+		this("");
+	}
+	
+	private Route(String name) {
 		route = Lists.newArrayList();
+		this.name = name; 
 	}
 	
 	public static Route ParseRouteByTaxiways(Waypoint start, String str) {
@@ -49,8 +55,8 @@ public class Route implements Iterable<Waypoint>{
 		return route;
 	}
 	
-	public static Route ParseRouteByWaypoints(JSONArray obj) throws JSONException {
-		Route route = new Route();
+	public static Route ParseRouteByWaypoints(JSONArray obj, String routeName) throws JSONException {
+		Route route = new Route(routeName);
 		List<Waypoint> waypoints = Lists.newArrayList();
 		int numWaypoints = obj.length();
 		for(int i=0; i<numWaypoints; i++) {
@@ -83,5 +89,12 @@ public class Route implements Iterable<Waypoint>{
 			return route.iterator();
 		}
 		return null;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public String getName() {
+		return name;
 	}
 }

@@ -27,6 +27,10 @@
         <servlet-name>AirportInfo</servlet-name>
         <servlet-class>com.vaggs.Servlets.AirportInfo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SavedRoutes</servlet-name>
+        <servlet-class>com.vaggs.Servlets.SavedRoutes</servlet-class>
+    </servlet>
 	<servlet-mapping>
 		<servlet-name>VAGGS</servlet-name>
 		<url-pattern>/vaggs</url-pattern>
@@ -35,6 +39,10 @@
 		<servlet-name>PostRoute</servlet-name>
 		<url-pattern>/postroute</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>SavedRoutes</servlet-name>
+        <url-pattern>/savedroutes</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
         <servlet-name>Route</servlet-name>
         <url-pattern>/route</url-pattern>

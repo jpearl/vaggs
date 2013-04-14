@@ -100,10 +100,14 @@
         polyLine = new google.maps.Polyline(taxiRouteOptions);
 
         var buttonDiv = document.createElement('div');
-        var button = new ButtonInit(buttonDiv, map);
+        var buttonDiv2 = document.createElement('div');
+        var sendRouteButton = new ButtonInit(buttonDiv, map, 'Send Route', sendRoute);
+        
+        var saveRouteButton = new ButtonInit(buttonDiv2, map, 'Save Route', saveRoute);
         
         buttonDiv.index = 1;
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonDiv);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(buttonDiv2);
         
         google.maps.event.addListener(map,'center_changed',function() { checkBounds(); });
         google.maps.event.addListener(map, 'zoom_changed', function() {
@@ -112,7 +116,7 @@
         });
       }
       
-      function ButtonInit(buttonDiv, map) {
+      function ButtonInit(buttonDiv, map, text, clickHandler) {
 
         buttonDiv.style.padding = '5px';
 
@@ -131,31 +135,43 @@
         controlText.style.fontSize = '12px';
         controlText.style.paddingLeft = '4px';
         controlText.style.paddingRight = '4px';
-        controlText.innerHTML = '<b>Send Route</b>';
+        controlText.innerHTML = '<b>' + text + '</b>';
         controlUI.appendChild(controlText);
 
         // Setup the click event listener
         // Start making async calls for route data
-        google.maps.event.addDomListener(controlUI, 'click', sendRoute);
+        google.maps.event.addDomListener(controlUI, 'click', clickHandler);
       }
       
       function sendRoute() {
-          /*
-          $.post("/postroute", JSON.stringify(route),
-          function(){
-            console.log("Sent route!");
-            route = [];
-            polyLine.getPath().clear(); 
-            //TODO: clear the markers
-          });
-          */
           var tCode = prompt("Tranponder Code of Airplane")
           $.ajax({
             type: "POST",
             url: '/postroute',
-            data: JSON.stringify({ "transponder" : tCode, "route" : routeWaypts }),
+            data: 'data='+JSON.stringify({ "transponder" : tCode, "route" : routeWaypts }),
             success: function() {
                 console.log("Sent route!");
+                routeWaypts = [];
+                routeIntersections = [];
+                polyLine.getPath().clear(); 
+                displayTaxiways([0]);
+              },
+            statusCode: {
+                403: function() {
+                    alert('Error: Not authenticated');
+                }
+            }
+          });
+      }
+      
+      function saveRoute() {
+        var routeName = prompt('Please enter a route name');
+        $.ajax({
+            type: "POST",
+            url: '/postroute?saveRoute',
+            data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
+            success: function() {
+                console.log("Sent route for saving!");
                 routeWaypts = [];
                 routeIntersections = [];
                 polyLine.getPath().clear(); 
