@@ -4,12 +4,12 @@ import static com.vaggs.Utils.OfyService.ofy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.Taxiway;
-import com.vaggs.Route.Transponder;
 import com.vaggs.Route.Waypoint;
 
 public class DebuggingDBObjects {
@@ -185,13 +185,15 @@ public class DebuggingDBObjects {
 		
 		ofy().save().entities(kpvd).now();
 		
-		AtcUser josh = new AtcUser("josh@joshpearl.com");
-		AtcUser hawk = new AtcUser("dazerdude");
-		AtcUser max = new AtcUser("maxbulian");
-		AtcUser user1 = new AtcUser("user1");
-		AtcUser user2 = new AtcUser("user2");
+		List<AtcUser> users = Lists.newArrayList(
+				new AtcUser("josh@joshpearl.com"),
+				new AtcUser("dazerdude"),
+				new AtcUser("maxbulian"),
+				new AtcUser("mchow01"),
+				new AtcUser("alshepro")
+			);
 		
-		ofy().save().entities(josh, hawk, max, user1, user2).now();
+		ofy().save().entities(users).now();
 		
 	}
 }
