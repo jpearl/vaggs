@@ -29,10 +29,12 @@ public class TowerServ extends HttpServlet {
 			return;
 		}
 		
-		if(user != null && AtcUser.GetUser(user.getNickname()) != null) {
+		if(user != null && AtcUser.GetUser(user.getNickname()) != null) { //logged in but not valid user
 			req.getRequestDispatcher("/atc.jsp").forward(req, resp);
-		} else {
+		} else if(user == null){ //not logged in
 			resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
+		} else { //logged in and not valid user
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Proper TRFS Authorization Required");
 		}
 	}
 }
