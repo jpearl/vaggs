@@ -13,6 +13,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.Taxiway;
 import com.vaggs.Route.Waypoint;
+import com.vaggs.Utils.VAGGSJsonWriter;
 
 @SuppressWarnings("serial")
 public class AirportInfo extends HttpServlet {
@@ -22,17 +23,17 @@ public class AirportInfo extends HttpServlet {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
-		JSONWriter writer = new JSONWriter(resp.getWriter());
+		VAGGSJsonWriter writer = new VAGGSJsonWriter(resp.getWriter());
 		String query = req.getParameter("airport");
 		if(null == query) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			writeError(writer, "Invalid request. Must query for a valid airport");
+			writer.writeError("Invalid request. Must query for a valid airport");
 			return;
 		}
 		
 		if(!query.equals("kpvd")) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writeError(writer, "Currently only supports KPVD");
+            writer.writeError("Currently only supports KPVD");
 			return;
 		}
 		
@@ -40,54 +41,11 @@ public class AirportInfo extends HttpServlet {
 		
 		if (null == airport) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writeError(writer, "No airport: " + query);
+            writer.writeError("No airport: " + query);
 			return;
 		}
 		
-		try {
-			writer.array();
-				writer.array();
-				for(Waypoint w : airport.getRouteStartingPoints()) {
-					writeWaypoint(writer, w);
-				}
-				writer.endArray();
-				for(Taxiway t : airport.getTaxiways()) {
-					writer.array();
-					for(Waypoint w : t.getWaypoints()) {
-						writeWaypoint(writer, w);
-					}
-					writer.endArray();
-				}
-			writer.endArray();
-			
-		} catch (JSONException e) { e.printStackTrace(); }
+		writer.writeAirportTaxiways(airport);
 		
-	}
-	
-	private void writeError(JSONWriter writer, String error) {
-		try {
-	        writer.object();
-		    	writer.key("error");
-		    	writer.object();
-		    		writer.key("description");
-		    		writer.value(error);
-		    	writer.endObject();
-	    	writer.endObject();
-		} catch (JSONException e) {
-	        e.printStackTrace();
-        }
-	}
-	
-	private void writeWaypoint(JSONWriter writer, Waypoint w) throws JSONException {
-		writer.object();
-			writer.key("Lat");
-			writer.value(w.getPoint().getLat());
-			writer.key("Lng");
-			writer.value(w.getPoint().getLng());
-			writer.key("Holdshort");
-			writer.value(w.isHoldShort());
-			writer.key("Intersection");
-			writer.value(w.isIntersection());
-		writer.endObject();
 	}
 }

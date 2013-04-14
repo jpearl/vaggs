@@ -11,6 +11,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.Transponder;
 import com.vaggs.Utils.JsonRouteWriter;
+import com.vaggs.Utils.VAGGSJsonWriter;
 
 @SuppressWarnings("serial")
 public class RouteQueryServ extends HttpServlet {
@@ -20,12 +21,12 @@ public class RouteQueryServ extends HttpServlet {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
-		JSONWriter writer = new JSONWriter(resp.getWriter());
+		VAGGSJsonWriter writer = new VAGGSJsonWriter(resp.getWriter());
 		
 		String query = req.getParameter("transponder");
 		if(null == query) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			writeError(writer, "Invalid request. Must query for a valid transponder");
+			writer.writeError("Invalid request. Must query for a valid transponder");
 			return;
 		}
 		
@@ -34,21 +35,7 @@ public class RouteQueryServ extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Transponder Code out of range");
 		} else if (transponder.hasRoute()){
 			Route route = transponder.getRoute();
-			JsonRouteWriter.writeRoute(writer, route);
+			writer.writeRoute(route);
 		}
-	}
-	
-	private void writeError(JSONWriter writer, String error) {
-		try {
-	        writer.object();
-		    	writer.key("error");
-		    	writer.object();
-		    		writer.key("description");
-		    		writer.value(error);
-		    	writer.endObject();
-	    	writer.endObject();
-		} catch (JSONException e) {
-	        e.printStackTrace();
-        }
 	}
 }

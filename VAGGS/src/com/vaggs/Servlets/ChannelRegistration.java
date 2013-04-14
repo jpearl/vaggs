@@ -14,12 +14,11 @@ import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.labs.repackaged.org.json.JSONException;
-import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.Transponder;
 import com.vaggs.Utils.Constants;
 import com.vaggs.Utils.Constants.CHANNEL_MODE;
+import com.vaggs.Utils.VAGGSJsonWriter;
 
 @SuppressWarnings("serial")
 public class ChannelRegistration extends HttpServlet {	
@@ -28,7 +27,7 @@ public class ChannelRegistration extends HttpServlet {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 		
-		JSONWriter writer = new JSONWriter(resp.getWriter());
+		VAGGSJsonWriter writer = new VAGGSJsonWriter(resp.getWriter());
 		
 		Airport pvd = ofy().load().type(Airport.class).id("kpvd").get();
 		
@@ -40,7 +39,7 @@ public class ChannelRegistration extends HttpServlet {
 				String transponderQuery = req.getParameter("transponder");
 				if(null == transponderQuery) {
 					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					writeError(writer, "Invalid request. Must query for a valid transponder");
+					writer.writeError("Invalid request. Must query for a valid transponder");
 					return;
 				}
 				
@@ -61,7 +60,7 @@ public class ChannelRegistration extends HttpServlet {
 				User user = UserServiceFactory.getUserService().getCurrentUser();
 				if(user == null) {
 					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		            writeError(writer, "Must	 be logged in to " + Constants.PROJECT_ACRONYM);
+		            writer.writeError("Must be logged in to " + Constants.PROJECT_ACRONYM);
 		            return;
 				} else {
 					clientId = user.getNickname();
@@ -76,29 +75,10 @@ public class ChannelRegistration extends HttpServlet {
 			ChannelService channelService = ChannelServiceFactory.getChannelService();
 			String token = channelService.createChannel(clientId);
 			
-			try {
-				writer.object();
-					writer.key("token");
-				    writer.value(token);
-				writer.endObject();
-			} catch (JSONException e) { e.printStackTrace(); }
+			writer.writeChannelToken(token);
 		} else {
-			System.out.println("mode was null");
+			writer.writeError("Invalid mode parameter");
 		}
 		
-	}
-	
-	void writeError(JSONWriter writer, String error) {
-		try {
-	        writer.object();
-		    	writer.key("error");
-		    	writer.object();
-		    		writer.key("description");
-		    		writer.value(error);
-		    	writer.endObject();
-	    	writer.endObject();
-		} catch (JSONException e) {
-	        e.printStackTrace();
-        }
 	}
 }
