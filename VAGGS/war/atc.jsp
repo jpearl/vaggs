@@ -416,6 +416,10 @@
         <div id="fav_routes" style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
             Favorite Route Div
         </div>
+        
+        <div id="connected_cockpits" style="position: absolute; left: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
+            Connected Cockpits Div
+        </div>
   </div>
   
   </body>
