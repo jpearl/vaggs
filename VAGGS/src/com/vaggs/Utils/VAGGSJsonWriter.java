@@ -46,9 +46,13 @@ public class VAGGSJsonWriter extends JSONWriter {
 	}
 	
 	public void writeRoutes(List<Route> routes) {
-		for(Route r : routes) {
-			writeRoute(r);
-		}
+		try{ 
+			array();
+			for(Route r : routes) {
+				writeRoute(r);
+			}
+			endArray();
+		} catch (JSONException e) { e.printStackTrace(); }
 	}
 	
 	private void writePoint(Waypoint pt) throws JSONException {
