@@ -29,7 +29,7 @@ public class Route implements Iterable<Waypoint>{
 	String name;
 	
 	private Route() {
-		this("");
+		
 	}
 	
 	private Route(String name) {
@@ -39,7 +39,7 @@ public class Route implements Iterable<Waypoint>{
 	
 	public static Route ParseRouteByTaxiways(Waypoint start, String str) {
 		if(start == null || str == null || str.isEmpty())
-			return new Route();
+			return new Route("");
 		Route route = new Route();
 		char[] chars = str.toCharArray();
 		LoadType<Taxiway> q = ofy().load().type(Taxiway.class);

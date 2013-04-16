@@ -166,23 +166,25 @@
       
       function saveRoute() {
         var routeName = prompt('Please enter a route name');
-        $.ajax({
-            type: "POST",
-            url: '/postroute?saveRoute',
-            data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
-            success: function() {
-                console.log("Sent route for saving!");
-                routeWaypts = [];
-                routeIntersections = [];
-                polyLine.getPath().clear(); 
-                displayTaxiways([0]);
-              },
-            statusCode: {
-                403: function() {
-                    alert('Error: Not authenticated');
+        if(routeName != null && routeName != '') {
+            $.ajax({
+                type: "POST",
+                url: '/postroute?saveRoute',
+                data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
+                success: function() {
+                    console.log("Sent route for saving!");
+                    routeWaypts = [];
+                    routeIntersections = [];
+                    polyLine.getPath().clear(); 
+                    displayTaxiways([0]);
+                  },
+                statusCode: {
+                    403: function() {
+                        alert('Error: Not authenticated');
+                    }
                 }
-            }
-          });
+              });
+         }
       }
       
       
