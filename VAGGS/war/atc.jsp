@@ -412,6 +412,10 @@
   <div id="page" style="height: 100%; width: 100%">
       
         <div id="map_canvas" style="width:100%; height:100%;"></div>
+        
+        <div id="fav_routes" style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
+            Favorite Route Div
+        </div>
   </div>
   
   </body>
