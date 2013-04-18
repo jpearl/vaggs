@@ -29,10 +29,58 @@
       var routeIntersections = [];
       var routeRequests = [];
       
+      var favRoutes = [];
+      
       PVDOverlay.prototype = new google.maps.OverlayView();
 
       function LatLng(lat, lng) {
         return new google.maps.LatLng(lat, lng);
+      }
+      
+      function getFaves() {
+        $.getJSON("savedroutes?airport=" + airportID, function(faves) {
+          console.log("Queried API and got favorite route info");
+          displayFaves(faves);
+        }).error(function() {
+          console.log("Failed to get favorite route info for " + airportID);
+        });
+      }
+      
+      function displayFaves(faves) {
+        favRoutes = faves;
+        $('#fav_routes').empty();
+        faves.forEach(function(fav) {
+          $('#fav_routes').append("<div onclick=\"displayFav('" + fav.routeName + "');\">" + fav.routeName + "</div>");
+        });
+      }
+      
+      function displayFav(name) {
+        var anything = false;
+        favRoutes.forEach(function(fav) {
+          if(fav.routeName === name) {   
+            anything = true;
+            markers.forEach(function (marker) {
+              marker.setMap(null);
+            });
+            markers = [];
+            
+            var pts = polyLine.getPath();
+            pts.clear();
+            fav.pts.forEach(function(pt) {
+              pts.push(LatLng(pt.Lat, pt.Lng));
+            });
+            routeWaypts = fav.pts;
+          }
+        });
+        if(!anything)
+          displayTaxiways([0]);
+      }
+      
+      function displayCockpits() {
+        $('#connected_cockpits').empty();
+        routeRequests.forEach(function(req) {
+          $('#connected_cockpits').append("<div onclick=\"sendRouteToCode(" + req + ");\">" + req + "</div>");
+        });
       }
       
       function initialize() {
@@ -87,6 +135,7 @@
         function processMessage(message) {
             transponder = $.parseJSON(message.data).transponder;
             routeRequests.push(transponder);
+            displayCockpits();
             console.log('Transponder: ' + transponder + ' connected');
         }
 		
@@ -98,7 +147,9 @@
           clickable: false,
         };
         polyLine = new google.maps.Polyline(taxiRouteOptions);
-
+        
+        getFaves();
+        
         var buttonDiv = document.createElement('div');
         var buttonDiv2 = document.createElement('div');
         var sendRouteButton = new ButtonInit(buttonDiv, map, 'Send Route', sendRoute);
@@ -144,7 +195,11 @@
       }
       
       function sendRoute() {
-          var tCode = prompt("Tranponder Code of Airplane")
+        var tCode = prompt("Tranponder Code of Airplane")
+        sendRouteToCode(tCode);
+      }
+      
+      function sendRouteToCode(tCode) {
           $.ajax({
             type: "POST",
             url: '/postroute',
@@ -167,26 +222,27 @@
       function saveRoute() {
         var routeName = prompt('Please enter a route name');
         if(routeName != null && routeName != '') {
-            $.ajax({
-                type: "POST",
-                url: '/postroute?saveRoute',
-                data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
-                success: function() {
-                    console.log("Sent route for saving!");
-                    routeWaypts = [];
-                    routeIntersections = [];
-                    polyLine.getPath().clear(); 
-                    displayTaxiways([0]);
-                  },
-                statusCode: {
-                    403: function() {
-                        alert('Error: Not authenticated');
-                    }
-                }
-              });
-         }
+          $.ajax({
+            type: "POST",
+            url: '/postroute?saveRoute',
+            data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
+            success: function() {
+              console.log("Sent route for saving!");
+              routeWaypts = [];
+              routeIntersections = [];
+              polyLine.getPath().clear(); 
+              displayTaxiways([0]);
+              getFaves();
+            },
+            statusCode: {
+              403: function() {
+                alert('Error: Not authenticated');
+                getFaves();
+              }
+            }
+          });
+        }
       }
-      
       
       function containsPt(taxiway, pt) {
         var ans = false;
@@ -412,16 +468,9 @@
   </head>
   <body onload="initialize()">
   <div id="page" style="height: 100%; width: 100%">
-      
         <div id="map_canvas" style="width:100%; height:100%;"></div>
-        
-        <div id="fav_routes" style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
-            Favorite Route Div
-        </div>
-        
-        <div id="connected_cockpits" style="position: absolute; left: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
-            Connected Cockpits Div
-        </div>
+        <div id="fav_routes" style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto"></div>
+        <div id="connected_cockpits" style="position: absolute; left: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto"></div>
   </div>
   
   </body>
