@@ -46,7 +46,5 @@ public class SavedRoutes extends HttpServlet {
 		}
 		
 		writer.writeRoutes(favRoutes.getRoutes());
-		
 	}
-	
 }

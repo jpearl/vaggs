@@ -3,12 +3,15 @@ package com.vaggs.Route;
 import static com.vaggs.Utils.OfyService.ofy;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.cmd.LoadType;
+import com.googlecode.objectify.cmd.Loader;
 import com.vaggs.Utils.JsonRouteWriter;
 
 /**
@@ -19,6 +22,10 @@ public class Transponder {
 	private Route route = null;
 	@Id private long code;
 	private Date timeStamp;
+	
+	public static List<Transponder> getAll() {
+		return ofy().load().type(Transponder.class).list();
+	}
 	
 	public static Transponder Parse(long code) {
 		if(!CheckTransponderCode(code)) 
