@@ -11,8 +11,7 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.cmd.LoadType;
-import com.googlecode.objectify.cmd.Loader;
+import com.googlecode.objectify.annotation.Index;
 import com.vaggs.Utils.JsonRouteWriter;
 
 /**
@@ -22,10 +21,10 @@ import com.vaggs.Utils.JsonRouteWriter;
 public class Transponder {
 	private Route route = null;
 	@Id private long code;
-	private Date timeStamp;
+	@Index private Date timeStamp;
 	
 	public static List<Transponder> getAllActive() {
-		List<Transponder> fullList = ofy().load().type(Transponder.class).list();
+		List<Transponder> fullList = ofy().load().type(Transponder.class).order("timeStamp").list();
 		List<Transponder> activeList = Lists.newArrayList();
 		for(Transponder t : fullList) {
 			if(t.isActive())
@@ -40,6 +39,8 @@ public class Transponder {
 		Transponder transponder = ofy().load().type(Transponder.class).id(code).get();
 		if(transponder == null || !transponder.isActive())
 			transponder = new Transponder(code);
+		else
+			transponder.ForceSave();
 		return transponder;
 	}
 
