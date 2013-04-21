@@ -7,6 +7,21 @@
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
+      
+      .favRoute, .cockpit {
+        background-color: grey;
+        color: white;
+        border-radius: 10px;
+        left: 10px;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        font-size: 1.5em;
+        margin-top: 8px;
+        cursor: pointer;
+      }
+      
     </style>
     
     <script type="text/javascript" src="jquery-1.9.1.min.js"></script>
@@ -30,6 +45,7 @@
       var routeRequests = [];
       
       var favRoutes = [];
+      var selectedFavDiv;
       
       PVDOverlay.prototype = new google.maps.OverlayView();
 
@@ -50,11 +66,11 @@
         favRoutes = faves;
         $('#fav_routes').empty();
         faves.forEach(function(fav) {
-          $('#fav_routes').append("<div onclick=\"displayFav('" + fav.routeName + "');\">" + fav.routeName + "</div>");
+          $('#fav_routes').append("<div class=\"favRoute\" onclick=\"displayFav('" + fav.routeName + "', this);\">" + fav.routeName + "</div>");
         });
       }
       
-      function displayFav(name) {
+      function displayFav(name, favDiv) {
         var anything = false;
         favRoutes.forEach(function(fav) {
           if(fav.routeName === name) {   
@@ -74,12 +90,22 @@
         });
         if(!anything)
           displayTaxiways([0]);
+          
+        $('#fav_routes').children().each(function(i, div) {
+            if(div == favDiv) {
+                div.style.backgroundColor = 'green';
+            }
+            else {
+                div.style.backgroundColor = 'grey';
+                
+            }
+        });
       }
       
       function displayCockpits() {
         $('#connected_cockpits').empty();
         routeRequests.forEach(function(req) {
-          $('#connected_cockpits').append("<div onclick=\"sendRouteToCode(" + req + ");\">" + req + "</div>");
+          $('#connected_cockpits').append("<div class=\"cockpit\" onclick=\"sendRouteToCode(" + req + ");\">" + req + "</div>");
         });
       }
       
@@ -199,6 +225,18 @@
         sendRouteToCode(tCode);
       }
       
+      function reset() {
+        routeWaypts = [];
+        routeIntersections = [];
+        polyLine.getPath().clear(); 
+        markers.forEach(function (marker) {
+            marker.setMap(null);
+          });
+        markers = [];
+        displayTaxiways([0]);
+        getFaves();
+      }
+      
       function sendRouteToCode(tCode) {
           $.ajax({
             type: "POST",
@@ -206,10 +244,7 @@
             data: 'data='+JSON.stringify({ "transponder" : tCode, "route" : routeWaypts }),
             success: function() {
                 console.log("Sent route!");
-                routeWaypts = [];
-                routeIntersections = [];
-                polyLine.getPath().clear(); 
-                displayTaxiways([0]);
+                reset();
               },
             statusCode: {
                 403: function() {
@@ -228,10 +263,7 @@
             data: 'data='+JSON.stringify({ "routeName" : routeName, "airport": "kpvd", "route" : routeWaypts }),
             success: function() {
               console.log("Sent route for saving!");
-              routeWaypts = [];
-              routeIntersections = [];
-              polyLine.getPath().clear(); 
-              displayTaxiways([0]);
+              reset();
               getFaves();
             },
             statusCode: {
@@ -469,7 +501,10 @@
   <body onload="initialize()">
   <div id="page" style="height: 100%; width: 100%">
         <div id="map_canvas" style="width:100%; height:100%;"></div>
-        <div id="fav_routes" style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto"></div>
+        <div style="position: absolute; right: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto">
+            <div id="fav_routes"></div>
+            <a href="javascript:void(0);" style="position: absolute; bottom: 8px; right: 8px;" onclick="reset()">Reset</a>
+        </div>
         <div id="connected_cockpits" style="position: absolute; left: 8px; top:32px; background-color: white; height: 90%; width: 20%; overflow-y: auto"></div>
   </div>
   
