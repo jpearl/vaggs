@@ -112,6 +112,14 @@
       function initialize() {
         $.ajax({cache:false});
         
+        //get already connected cockpits
+        $.getJSON("connectedcockpits?airport=" + airportID, function(cockpits) {
+            cockpits.forEach(function(cockpit) {
+                routeRequests.push(cockpit);
+            });
+            displayCockpits();
+        });
+        
 		//register and set up the channel
         $.getJSON("channelregistration?mode=tower", function(tokenResp) {
             token = tokenResp.token;
