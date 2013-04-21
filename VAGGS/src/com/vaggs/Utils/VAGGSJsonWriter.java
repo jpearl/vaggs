@@ -8,6 +8,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.AirportDiagram.Airport;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.Taxiway;
+import com.vaggs.Route.Transponder;
 import com.vaggs.Route.Waypoint;
 
 public class VAGGSJsonWriter extends JSONWriter {
@@ -103,6 +104,15 @@ public class VAGGSJsonWriter extends JSONWriter {
 				for(Taxiway t : airport.getTaxiways()) {
 					writeTaxiway(t);
 				}
+			endArray();
+		} catch (JSONException e) { e.printStackTrace(); }
+	}
+	
+	public void writeCockpits(List<Transponder> cockpits) {
+		try {
+			array();
+				for(Transponder t : cockpits)
+					value(t.getTransponderCode());
 			endArray();
 		} catch (JSONException e) { e.printStackTrace(); }
 	}

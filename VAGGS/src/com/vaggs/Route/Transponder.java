@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.cmd.LoadType;
@@ -23,15 +24,21 @@ public class Transponder {
 	@Id private long code;
 	private Date timeStamp;
 	
-	public static List<Transponder> getAll() {
-		return ofy().load().type(Transponder.class).list();
+	public static List<Transponder> getAllActive() {
+		List<Transponder> fullList = ofy().load().type(Transponder.class).list();
+		List<Transponder> activeList = Lists.newArrayList();
+		for(Transponder t : fullList) {
+			if(t.isActive())
+				activeList.add(t);
+		}
+		return activeList;
 	}
 	
 	public static Transponder Parse(long code) {
 		if(!CheckTransponderCode(code)) 
 			return null;
 		Transponder transponder = ofy().load().type(Transponder.class).id(code).get();
-		if(transponder == null || transponder.timeStamp.before(getInvalidTime()))
+		if(transponder == null || !transponder.isActive())
 			transponder = new Transponder(code);
 		return transponder;
 	}
@@ -41,6 +48,10 @@ public class Transponder {
 		Date time = new Date();
 		time.setTime(time.getTime() - halfHourInMillis);
 		return time;
+	}
+	
+	public boolean isActive() {
+		return !timeStamp.before(getInvalidTime());
 	}
 	
 	private Transponder() {

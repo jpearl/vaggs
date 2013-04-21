@@ -12,6 +12,10 @@
       <servlet-class>com.vaggs.Servlets.RouteQueryServ</servlet-class>
     </servlet>
     <servlet>
+       <servlet-name>ConnectedCockpits</servlet-name>
+      <servlet-class>com.vaggs.Servlets.ConnectedCockpits</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ChannelRegistration</servlet-name>
         <servlet-class>com.vaggs.Servlets.ChannelRegistration</servlet-class>
     </servlet>
@@ -46,6 +50,10 @@
     <servlet-mapping>
         <servlet-name>ChannelRegistration</servlet-name>
         <url-pattern>/channelregistration</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConnectedCockpits</servlet-name>
+        <url-pattern>/connectedcockpits</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ChannelConnection</servlet-name>
