@@ -111,8 +111,14 @@ public class VAGGSJsonWriter extends JSONWriter {
 	public void writeCockpits(List<Transponder> cockpits) {
 		try {
 			array();
-				for(Transponder t : cockpits)
-					value(t.getTransponderCode());
+				for(Transponder t : cockpits) {
+					object();
+						key("transponder");
+						value(t.getTransponderCode());
+						key("hasRoute");
+						value(t.hasRoute());
+					endObject();
+				}
 			endArray();
 		} catch (JSONException e) { e.printStackTrace(); }
 	}

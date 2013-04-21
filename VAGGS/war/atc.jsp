@@ -42,7 +42,7 @@
       var polyLine = null;
       var routeWaypts = [];
       var routeIntersections = [];
-      var routeRequests = [];
+      var routeRequests = []; //array of objects with fields {transponder, hasRoute}
       
       var favRoutes = [];
       var selectedFavDiv;
@@ -105,7 +105,10 @@
       function displayCockpits() {
         $('#connected_cockpits').empty();
         routeRequests.forEach(function(req) {
-          $('#connected_cockpits').append("<div class=\"cockpit\" onclick=\"sendRouteToCode(" + req + ");\">" + req + "</div>");
+            var color;
+            if(req.hasRoute)
+                color = "background-color: green;"; 
+          $('#connected_cockpits').append("<div class=\"cockpit\" style=\"" + color + "\" onclick=\"sendRouteToCode(" + req.transponder + "); this.style.backgroundColor='green';\">" + req.transponder + "</div>");
         });
       }
       
@@ -168,7 +171,10 @@
         
         function processMessage(message) {
             transponder = $.parseJSON(message.data).transponder;
-            routeRequests.push(transponder);
+            var cockpit = new Object();
+            cockpit.transponder = transponder;
+            cockpit.hasRoute = false;
+            routeRequests.push(cockpit);
             displayCockpits();
             console.log('Transponder: ' + transponder + ' connected');
         }
