@@ -6,11 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.labs.repackaged.org.json.JSONException;
-import com.google.appengine.labs.repackaged.org.json.JSONWriter;
 import com.vaggs.Route.Route;
 import com.vaggs.Route.Transponder;
-import com.vaggs.Utils.JsonRouteWriter;
 import com.vaggs.Utils.VAGGSJsonWriter;
 
 @SuppressWarnings("serial")
